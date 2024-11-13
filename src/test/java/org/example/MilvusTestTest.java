@@ -24,15 +24,17 @@ public class MilvusTestTest extends TestCase {
     }
 
 
-    @Test
-    public void testInsert() throws InterruptedException {
-        long r = test.insert();
-        assertEquals(r, 10);
-    }
+//    @Test
+//    public void testInsert() throws InterruptedException {
+//        long r = test.insert();
+//        assertEquals(r, 10);
+//    }
 
     @Test
     public void testSearch() throws InterruptedException {
-        long r= test.search();
+        long r = test.insert();
+        assertEquals(r, 10);
+        r= test.search();
         assertEquals(r, 10);
     }
 }
