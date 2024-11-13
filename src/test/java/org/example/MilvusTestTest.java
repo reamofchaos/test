@@ -32,9 +32,9 @@ public class MilvusTestTest extends TestCase {
 
     @Test
     public void testSearch() throws InterruptedException {
-//        long r = test.insert();
-//        assertEquals(r, 10);
-//        System.out.println("insert test ok");
+        long r = test.insert();
+        assertEquals(r, 10);
+        System.out.println("insert test ok");
         long r1= test.search();
         assertEquals(r1, 10);
         System.out.println("search test ok");
