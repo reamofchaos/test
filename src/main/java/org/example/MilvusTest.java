@@ -53,7 +53,7 @@ public class MilvusTest {
                     .dimension(4)
                     .build());
         }catch (Exception e){
-            System.out.println("collection exists");    
+            System.out.println("collection exists");
         }
 
         System.out.println("create success");
@@ -82,7 +82,9 @@ public class MilvusTest {
         client.useDatabase("test");
         QueryResp resp = client.query(QueryReq.builder().collectionName("test")
                 .filter("id>0").build());
-        return resp.getQueryResults().size();
+        long size = resp.getQueryResults().size();
+        System.out.println("size = "+size);
+        return size;
     }
 
     public void close() {
