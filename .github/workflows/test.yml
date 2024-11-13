@@ -54,7 +54,7 @@ jobs:
           # List running Docker containers to verify Milvus is running
           docker ps
           # Wait for Milvus to fully start
-          sleep ¼0
+          sleep 2
           # Print logs to verify
           docker logs $(docker ps -q --filter "name=milvus")
 
