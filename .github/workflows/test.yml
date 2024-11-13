@@ -1,0 +1,24 @@
+name: Pull Request Workflow
+
+on:
+  pull_request:
+    branches: [ master ]  # 仅当 Pull Request 目标分支是 main 时触发
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest  # 使用最新的 Ubuntu 运行器
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4  # 检出代码
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '8'  # Specify the JDK version (e.g., 8, 11, 17)
+          cache: "maven"
+          distribution: "temurin"
+
+      - name: Run tests
+        run: mvn test  # 运行测试
+
