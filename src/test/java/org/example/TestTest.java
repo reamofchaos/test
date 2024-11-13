@@ -17,6 +17,6 @@ public class TestTest {
     public void sub() {
         org.example.Test test =new org.example.Test();
         int result = test.sub(1,2);
-        assert result==0;
+        assert result==-1;
     }
 }
