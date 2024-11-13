@@ -20,7 +20,7 @@ jobs:
           distribution: "temurin"
 
       - name: Verify Docker Compose installation
-        run: docker-compose --version
+        run: docker --version
 
       - name: Run tests
         run: mvn test  # 运行测试
