@@ -27,6 +27,8 @@ runs:
           shell: bash
           working-directory: ${{ github.action_path }}
           run: |
+            pwd
+            ls -l
             for port in ${{ inputs.ports }}; do
               cp -f ./standalone_embed.sh ./standalone_embed_$port.sh
               sed -i"" -e "s/19530/$port/g" ./standalone_embed_$port.sh
