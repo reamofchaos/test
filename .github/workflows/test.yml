@@ -7,6 +7,8 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest  # 使用最新的 Ubuntu 运行器
+#    runs-on: macos-latest  # 使用最新的 Ubuntu 运行器
+#    runs-on: windows-latest  # 使用最新的 Ubuntu 运行器
 
     steps:
       - name: Checkout repository
@@ -17,7 +19,44 @@ jobs:
         with:
           java-version: '8'  # Specify the JDK version (e.g., 8, 11, 17)
           cache: "maven"
-          distribution: "temurin"
+#          distribution: "temurin"
+          distribution: ${{ runner.os == 'macOS' && 'liberica' || 'temurin' }}
+
+      - if: runner.os == 'macOS'
+        name: Install Docker on MacOS
+        shell: bash
+        run: |
+          brew update
+          brew install docker
+          brew install colima
+          LIMACTL_PATH=$(brew --prefix)/bin/limactl
+          sudo curl -L -o $LIMACTL_PATH https://github.com/mikekazakov/lima-nohvf/raw/master/limactl && sudo chmod +x $LIMACTL_PATH
+          colima start --network-address --arch arm64 --vm-type=qemu
+          docker --version
+
+      - name: Verify Docker Compose installation
+        run: docker --version
+
+      - name: Download Milvus Installation Script
+        run: |
+          # Download the Milvus standalone embed script
+          curl -sfL https://raw.githubusercontent.com/milvus-io/milvus/master/scripts/standalone_embed.sh -o standalone_embed.sh
+          # Make the script executable
+          chmod +x standalone_embed.sh
+
+      - name: Start Milvus
+        run: |
+          # Start Milvus using the standalone embed script
+          ./standalone_embed.sh start
+
+      - name: Verify Milvus is running
+        run: |
+          # List running Docker containers to verify Milvus is running
+          docker ps
+          # Wait for Milvus to fully start
+          sleep 2
+          # Print logs to verify
+          docker logs $(docker ps -q --filter "name=milvus")
 
       - name: Run tests
         run: mvn test  # 运行测试
