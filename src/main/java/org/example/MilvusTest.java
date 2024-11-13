@@ -14,6 +14,7 @@ import io.milvus.v2.service.vector.response.QueryResp;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class MilvusTest {
     private String uri = "grpc://127.0.0.1:19530";
@@ -38,15 +39,22 @@ public class MilvusTest {
     }
 
     public void create() throws InterruptedException {
-
-        client.createDatabase(CreateDatabaseReq.builder().databaseName("test").build());
+        try {
+            client.createDatabase(CreateDatabaseReq.builder().databaseName("test").build());
+        }catch (Exception e){
+            System.out.println("database exists");
+        }
 
         client.useDatabase("test");
 
-        client.createCollection(CreateCollectionReq.builder()
-                .collectionName("test")
-                .dimension(4)
-                .build());
+        try {
+            client.createCollection(CreateCollectionReq.builder()
+                    .collectionName("test")
+                    .dimension(4)
+                    .build());
+        }catch (Exception e){
+            System.out.println("collection exists");    
+        }
 
         System.out.println("create success");
     }
