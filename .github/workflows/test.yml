@@ -20,5 +20,5 @@ jobs:
           distribution: "temurin"
 
       - name: Run tests
-        run: nvm test  # 运行测试
+        run: mvn test  # 运行测试
 
