@@ -17,6 +17,7 @@ jobs:
         with:
           java-version: '8'  # Specify the JDK version (e.g., 8, 11, 17)
           cache: "maven"
+          distribution: "temurin"
 
       - name: Run tests
         run: nvm test  # 运行测试
