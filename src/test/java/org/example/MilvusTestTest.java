@@ -19,7 +19,8 @@ public class MilvusTestTest extends TestCase {
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws InterruptedException {
+        test.drop();
         test.close();
     }
 
@@ -35,6 +36,7 @@ public class MilvusTestTest extends TestCase {
         long r = test.insert();
         assertEquals(r, 10);
         System.out.println("insert test ok");
+//        Thread.sleep(1000);
         long r1= test.search();
         assertEquals(r1, 10);
         System.out.println("search test ok");

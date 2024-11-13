@@ -5,8 +5,11 @@ import com.google.gson.JsonObject;
 import io.milvus.param.dml.QueryParam;
 import io.milvus.pool.MilvusClientV2Pool;
 import io.milvus.v2.client.MilvusClientV2;
+import io.milvus.v2.common.ConsistencyLevel;
 import io.milvus.v2.service.collection.request.CreateCollectionReq;
+import io.milvus.v2.service.collection.request.DropCollectionReq;
 import io.milvus.v2.service.database.request.CreateDatabaseReq;
+import io.milvus.v2.service.database.request.DropDatabaseReq;
 import io.milvus.v2.service.vector.request.InsertReq;
 import io.milvus.v2.service.vector.request.QueryReq;
 import io.milvus.v2.service.vector.response.InsertResp;
@@ -39,6 +42,11 @@ public class MilvusTest {
         return client;
     }
 
+    public void drop() throws InterruptedException {
+        client.dropCollection(DropCollectionReq.builder().collectionName("test").build());
+        client.dropDatabase(DropDatabaseReq.builder().databaseName("test").build());
+    }
+
     public void create() throws InterruptedException {
         try {
             client.createDatabase(CreateDatabaseReq.builder().databaseName("test").build());
@@ -52,6 +60,7 @@ public class MilvusTest {
             client.createCollection(CreateCollectionReq.builder()
                     .collectionName("test")
                     .dimension(4)
+                    .consistencyLevel(ConsistencyLevel.STRONG)
                     .build());
         }catch (Exception e){
             System.out.println("collection exists");
