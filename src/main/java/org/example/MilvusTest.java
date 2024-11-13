@@ -75,6 +75,7 @@ public class MilvusTest {
         InsertResp insertR =
                 client
                         .insert(InsertReq.builder().collectionName(collectionName).data(rows).build());
+        System.out.println("inserted : "+insertR.getInsertCnt());
         return insertR.getInsertCnt();
     }
 
