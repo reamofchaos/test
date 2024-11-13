@@ -9,8 +9,9 @@ runs:
         working-directory: ${{ github.action_path }}
         run: |
           # Download the Milvus standalone embed script
-          curl -sfL https://raw.githubusercontent.com/milvus-io/milvus/master/scripts/standalone_embed.sh -o standalone_embed.sh
+          curl -sfL https://raw.githubusercontent.com/milvus-io/milvus/master/scripts/standalone_embed.sh -o ${{ github.action_path }}/standalone_embed.sh
           # Make the script executable
-          chmod +x ./standalone_embed.sh
+          chmod +x ${{ github.action_path }}/standalone_embed.sh
+          echo "${{ github.action_path }}"
           pwd
           ls -l
