@@ -82,9 +82,14 @@ public class MilvusTest {
     public long search() throws InterruptedException {
         client.useDatabase("test");
         QueryResp resp = client.query(QueryReq.builder().collectionName("test")
-                .filter("id>0").build());
+                .filter("").build());
         long size = resp.getQueryResults().size();
         System.out.println("size = "+size);
+
+        for (int i = 0; i < size; i++) {
+            System.out.println(resp.getQueryResults().get(i).getEntity());
+        }
+
         return size;
     }
 
