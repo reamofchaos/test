@@ -37,17 +37,27 @@ jobs:
       - name: Verify Docker Compose installation
         run: docker --version
 
-      - name: Download Milvus Installation Script
-        run: |
-          # Download the Milvus standalone embed script
-          curl -sfL https://raw.githubusercontent.com/milvus-io/milvus/master/scripts/standalone_embed.sh -o standalone_embed.sh
-          # Make the script executable
-          chmod +x standalone_embed.sh
+#      - name: Download Milvus Installation Script
+#        run: |
+#          # Download the Milvus standalone embed script
+#          curl -sfL https://raw.githubusercontent.com/milvus-io/milvus/master/scripts/standalone_embed.sh -o standalone_embed.sh
+#          # Make the script executable
+#          chmod +x standalone_embed.sh
 
-      - name: Start Milvus
-        run: |
-          # Start Milvus using the standalone embed script
-          ./standalone_embed.sh start
+#      - name: Start Milvus
+#        run: |
+#          # Start Milvus using the standalone embed script
+#          ./standalone_embed.sh start
+      - name: Setup Milvus DB
+        uses: ./.github/workflows/actions/setup/vectordb
+
+      - name: Run Milvus DB
+        uses: ./.github/workflows/actions/service/vectordb
+        with:
+          stop: false
+          clean: false
+          start: true
+          ports: 19530 19531 19532
 
       - name: Verify Milvus is running
         run: |

@@ -1,0 +1,48 @@
+name: "redis"
+description: "stop, clean and start redis in order"
+inputs:
+    stop:
+        description: "whether to stop"
+        required: true
+    clean:
+        description: "whether to clean"
+        required: true
+    start:
+        description: "whether to start"
+        required: true
+    ports:
+        description: "ports to run on"
+        required: false
+        default: "19530"
+
+runs:
+    using: "composite"
+    steps:
+        - if: fromJSON(inputs.stop) || fromJSON(inputs.clean)
+          name: unimplemented
+          shell: bash
+          run: exit 1
+
+        - name: Create Config and Data Directory
+          shell: bash
+          working-directory: ${{ github.action_path }}
+          run: |
+            for port in ${{ inputs.ports }}; do
+              cp -f standalone_embed.sh standalone_embed_$port.sh
+              sed -i"" -e "s/19530/$port/g" standalone_embed_$port.sh
+              sed -i"" -e "s/volumes/volumes_$port/g" standalone_embed_$port.sh
+              sed -i"" -e "s/\$(pwd)\/embedEtcd.yaml/\$(pwd)\/embedEtcd_$port.yaml/g" standalone_embed_$port.sh
+              sed -i"" -e "s/> embedEtcd.yaml/> embedEtcd_$port.yaml/g" standalone_embed_$port.sh
+              sed -i"" -e "s/\$(pwd)\/user.yaml/\$(pwd)\/user_$port.yaml/g" standalone_embed_$port.sh
+              sed -i"" -e "s/> user.yaml/> user_$port.yaml/g" standalone_embed_$port.sh
+              chmod +x standalone_embed_$port.sh
+            done
+
+        - if: fromJSON(inputs.start)
+          name: Start milvus
+          shell: bash
+          working-directory: ${{ github.action_path }}
+          run: |
+              for port in ${{ inputs.ports }}; do
+                bash standalone_embed_$port.sh start
+              done
