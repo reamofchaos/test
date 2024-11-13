@@ -19,6 +19,9 @@ jobs:
           cache: "maven"
           distribution: "temurin"
 
+      - name: Verify Docker Compose installation
+        run: docker-compose --version
+
       - name: Run tests
         run: mvn test  # 运行测试
 
