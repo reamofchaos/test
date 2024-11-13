@@ -16,7 +16,6 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: '8'  # Specify the JDK version (e.g., 8, 11, 17)
-          maven-version: '3.9.9'  # Specify the Maven version, adjust as needed
           cache: "maven"
 
       - name: Run tests
