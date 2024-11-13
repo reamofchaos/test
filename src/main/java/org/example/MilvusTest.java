@@ -13,6 +13,7 @@ import io.milvus.v2.service.vector.response.InsertResp;
 import io.milvus.v2.service.vector.response.QueryResp;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -82,7 +83,7 @@ public class MilvusTest {
     public long search() throws InterruptedException {
         client.useDatabase("test");
         QueryResp resp = client.query(QueryReq.builder().collectionName("test")
-                .filter("").limit(10000).build());
+                .filter("").outputFields(Arrays.asList("num")).limit(10000).build());
         long size = resp.getQueryResults().size();
         System.out.println("size = "+size);
 
