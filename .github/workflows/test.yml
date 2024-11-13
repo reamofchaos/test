@@ -22,6 +22,18 @@ jobs:
 #          distribution: "temurin"
           distribution: ${{ runner.os == 'macOS' && 'liberica' || 'temurin' }}
 
+      - if: runner.os == 'macOS'
+        name: Install Docker on MacOS
+        shell: bash
+        run: |
+          brew update
+          brew install docker
+          brew install colima
+          LIMACTL_PATH=$(brew --prefix)/bin/limactl
+          sudo curl -L -o $LIMACTL_PATH https://github.com/mikekazakov/lima-nohvf/raw/master/limactl && sudo chmod +x $LIMACTL_PATH
+          colima start --network-address --arch arm64 --vm-type=qemu
+          docker --version
+
       - name: Verify Docker Compose installation
         run: docker --version
 
