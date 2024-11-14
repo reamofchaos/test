@@ -106,24 +106,10 @@ jobs:
 #        run: docker-compose --version
 
 
-      - name: Install Homebrew
+      - name: Install docker
         run: |
-          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-          echo '/usr/local/bin' >> $GITHUB_PATH
-
-      - name: Install Docker
-        run: |
-          brew install --cask docker
-          # 启动 Docker 服务
-          open /Applications/Docker.app
-          # 等待 Docker 服务启动
-          until docker info; do
-            sleep 3
-          done
-
-      - name: Install Docker Compose
-        run: |
-          brew install docker-compose
+          brew install docker docker-machine docker-compose
+          sudo docker –version
 
       - name: Verify Docker and Docker Compose installations
         run: |
