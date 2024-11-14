@@ -42,13 +42,15 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = "Stop"
-          $dockerComposeVersion = "1.29.2"  # 根据需要更改版本号
+          $dockerComposeVersion = "2.30.3"  # 根据需要更改版本号
           $dockerComposePath = "${{ github.workspace }}\docker-compose.exe"  # 使用临时目录
 
           # 下载 Docker Compose
           Invoke-WebRequest -Uri "https://github.com/docker/compose/releases/download/$dockerComposeVersion/docker-compose-Windows-x86_64.exe" -OutFile $dockerComposePath
+          $dockerComposeDir = [System.IO.Path]::GetDirectoryName($dockerComposePath)
+          [System.Environment]::SetEnvironmentVariable("Path", "$env:Path;$dockerComposeDir", [System.EnvironmentVariableTarget]::Machine)
 
-          $dockerComposePath --version
+          docker-compose --version
 
       - name: Verify Docker installation
         shell: bash
