@@ -22,21 +22,21 @@ jobs:
 #          distribution: "temurin"
           distribution: ${{ runner.os == 'macOS' && 'liberica' || 'temurin' }}
 
-      - if: runner.os == 'macOS'
-        name: Install Docker on MacOS
-        shell: bash
-        run: |
-          brew update
-          brew install qemu
-          brew install docker
-          brew install colima
-          LIMACTL_PATH=$(brew --prefix)/bin/limactl
-          sudo curl -L -o $LIMACTL_PATH https://github.com/mikekazakov/lima-nohvf/raw/master/limactl && sudo chmod +x $LIMACTL_PATH
-          colima start --network-address --arch arm64 --vm-type=qemu
-          docker --version
-
-      - name: Verify Docker installation
-        run: docker --version
+#      - if: runner.os == 'macOS'
+#        name: Install Docker on MacOS
+#        shell: bash
+#        run: |
+#          brew update
+#          brew install qemu
+#          brew install docker
+#          brew install colima
+#          LIMACTL_PATH=$(brew --prefix)/bin/limactl
+#          sudo curl -L -o $LIMACTL_PATH https://github.com/mikekazakov/lima-nohvf/raw/master/limactl && sudo chmod +x $LIMACTL_PATH
+#          colima start --network-address --arch arm64 --vm-type=qemu
+#          docker --version
+#
+#      - name: Verify Docker installation
+#        run: docker --version
 
 #      - name: Download Milvus Installation Script
 #        run: |
@@ -96,15 +96,38 @@ jobs:
 #        run: |
 #          & "${{ github.workspace }}\docker-compose.exe" --version
 
+#      - name: Install Docker Compose
+#        run: |
+#          $dockerComposeVersion = "1.29.2"
+#          sudo curl -L "https://github.com/docker/compose/releases/download/$dockerComposeVersion/docker-compose-darwin-x86_64" -o /usr/local/bin/docker-compose
+#          sudo chmod +x /usr/local/bin/docker-compose
+#
+#      - name: Verify Docker Compose version
+#        run: docker-compose --version
+
+
+      - name: Install Docker
+        run: |
+          # 检查并启动 Docker  
+          open /Applications/Docker.app  
+          # 等待 Docker 完全启动  
+          sleep 30   
+
       - name: Install Docker Compose
         run: |
-          $dockerComposeVersion = "1.29.2"
-          sudo curl -L "https://github.com/docker/compose/releases/download/$dockerComposeVersion/docker-compose-darwin-x86_64" -o /usr/local/bin/docker-compose
-          sudo chmod +x /usr/local/bin/docker-compose
+          # 定义 Docker Compose 版本  
+          dockerComposeVersion="1.29.2"  # 根据需要更改为最新版本  
+          # 下载 Docker Compose 到 /usr/local/bin  
+          sudo curl -L "https://github.com/docker/compose/releases/download/$dockerComposeVersion/docker-compose-darwin-x86_64" -o /usr/local/bin/docker-compose  
+          # 添加可执行权限  
+          sudo chmod +x /usr/local/bin/docker-compose  
 
-      - name: Verify Docker Compose version
-        run: docker-compose --version
-
+      - name: Verify Docker and Docker Compose installation
+        run: |
+          # 验证 Docker 是否安装成功  
+          docker --version  
+          # 验证 Docker Compose 是否安装成功  
+          docker-compose --version  
 
       - name: Run tests
         run: mvn test  # 运行测试
