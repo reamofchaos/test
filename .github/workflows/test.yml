@@ -106,21 +106,30 @@ jobs:
 #        run: docker-compose --version
 
 
+      - name: Install Homebrew
+        run: |
+          if ! command -v brew &> /dev/null; then  
+          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"  
+          fi  
+
       - name: Install Docker
         run: |
-          # 检查并启动 Docker  
-          open /Applications/Docker.app  
-          # 等待 Docker 完全启动  
-          sleep 30   
+          brew install --cask docker  
 
       - name: Install Docker Compose
         run: |
-          # 定义 Docker Compose 版本  
-          dockerComposeVersion="1.29.2"  # 根据需要更改为最新版本  
+          dockerComposeVersion="1.29.2"  # 可以根据需要更改为最新版本  
           # 下载 Docker Compose 到 /usr/local/bin  
-          sudo curl -L "https://github.com/docker/compose/releases/download/$dockerComposeVersion/docker-compose-darwin-x86_64" -o /usr/local/bin/docker-compose  
+          sudo curl -L "https://github.com/docker/compose/releases/download/${dockerComposeVersion}/docker-compose-darwin-x86_64" -o /usr/local/bin/docker-compose  
           # 添加可执行权限  
           sudo chmod +x /usr/local/bin/docker-compose  
+
+      - name: Start Docker
+        run: |
+          # 启动 Docker 服务  
+          open -a Docker  
+          # 等待 Docker 启动  
+          sleep 30  
 
       - name: Verify Docker and Docker Compose installation
         run: |
