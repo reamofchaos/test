@@ -48,37 +48,25 @@ jobs:
 #        run: |
 #          # Start Milvus using the standalone embed script
 #          ./standalone_embed.sh start
+      - name: Setup Milvus DB
+        uses: ./.github/workflows/actions/setup/vectordb
 
+      - name: Run Milvus DB
+        uses: ./.github/workflows/actions/service/vectordb
+        with:
+          stop: false
+          clean: false
+          start: true
+          ports: 19530 19531 19532
 
-#      - name: Setup Milvus DB
-#        uses: ./.github/workflows/actions/setup/vectordb
-#
-#      - name: Run Milvus DB
-#        uses: ./.github/workflows/actions/service/vectordb
-#        with:
-#          stop: false
-#          clean: false
-#          start: true
-#          ports: 19530 19531 19532
-#
-#      - name: Verify Milvus is running
-#        run: |
-#          # List running Docker containers to verify Milvus is running
-#          docker ps
-#          # Wait for Milvus to fully start
-#          sleep 2
-#          # Print logs to verify
-#          docker logs $(docker ps -q --filter "name=milvus")
-
-      - name: Install Docker Compose
+      - name: Verify Milvus is running
         run: |
-          sudo apt-get update
-          sudo apt-get install -y docker-compose-plugin
-
-      - name: Verify Docker Compose installation
-        run: |
-          docker compose version
-
+          # List running Docker containers to verify Milvus is running
+          docker ps
+          # Wait for Milvus to fully start
+          sleep 2
+          # Print logs to verify
+          docker logs $(docker ps -q --filter "name=milvus")
 
       - name: Run tests
         run: mvn test  # 运行测试
