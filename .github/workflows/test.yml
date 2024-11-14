@@ -7,8 +7,8 @@ on:
 jobs:
   build-and-test:
 #    runs-on: ubuntu-latest  # 使用最新的 Ubuntu 运行器
-#    runs-on: macos-latest  # 使用最新的 Ubuntu 运行器
-    runs-on: windows-latest  # 使用最新的 Ubuntu 运行器
+    runs-on: macos-latest  # 使用最新的 Ubuntu 运行器
+#    runs-on: windows-latest  # 使用最新的 Ubuntu 运行器
 
     steps:
       - name: Checkout repository
@@ -80,21 +80,30 @@ jobs:
 #        run: |
 #          docker-compose --version
 
+#      - name: Install Docker Compose
+#        shell: pwsh
+#        run: |
+#          $ErrorActionPreference = "Stop"
+#          $dockerComposeVersion = "1.29.2"  # 根据需要更改版本号
+#          $dockerComposePath = "${{ github.workspace }}\docker-compose.exe"  # 使用临时目录
+#
+#          # 下载 Docker Compose
+#          Invoke-WebRequest -Uri "https://github.com/docker/compose/releases/download/$dockerComposeVersion/docker-compose-Windows-x86_64.exe" -OutFile $dockerComposePath
+#
+#      - name: Verify Docker Compose version
+#        shell: pwsh
+#        run: |
+#          & "${{ github.workspace }}\docker-compose.exe" --version
+
       - name: Install Docker Compose
-        shell: pwsh
         run: |
-          $ErrorActionPreference = "Stop"  
-          $dockerComposeVersion = "1.29.2"  # 根据需要更改版本号  
-          $dockerComposePath = "${{ github.workspace }}\docker-compose.exe"  # 使用临时目录  
-          
-          # 下载 Docker Compose  
-          Invoke-WebRequest -Uri "https://github.com/docker/compose/releases/download/$dockerComposeVersion/docker-compose-Windows-x86_64.exe" -OutFile $dockerComposePath  
+          $dockerComposeVersion = "1.29.2"
+          sudo curl -L "https://github.com/docker/compose/releases/download/$dockerComposeVersion/docker-compose-darwin-x86_64" -o /usr/local/bin/docker-compose  
+          sudo chmod +x /usr/local/bin/docker-compose  
 
       - name: Verify Docker Compose version
-        shell: pwsh
-        run: |
-          & "${{ github.workspace }}\docker-compose.exe" --version  
-          & docker-compose --version
+        run: docker-compose --version
+
 
       - name: Run tests
         run: mvn test  # 运行测试
