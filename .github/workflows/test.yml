@@ -70,16 +70,32 @@ jobs:
 #          # Print logs to verify
 #          docker logs $(docker ps -q --filter "name=milvus")
 
+#      - name: Install Docker Compose
+#        run: |
+#          DOCKER_COMPOSE_VERSION=1.29.2
+#          sudo curl -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+#          sudo chmod +x /usr/local/bin/docker-compose
+#
+#      - name: Verify Docker Compose version
+#        run: |
+#          docker-compose --version
+
       - name: Install Docker Compose
+        shell: pwsh
         run: |
-          DOCKER_COMPOSE_VERSION=1.29.2  # 您可以根据需要更改版本号  
-          sudo curl -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose  
-          sudo chmod +x /usr/local/bin/docker-compose  
+          $ErrorActionPreference = "Stop"  
+          $dockerComposeVersion = "1.29.2"
+          $dockerComposePath = "C:\Program Files\Docker\Docker\resources\bin\docker-compose.exe"  
+
+          Invoke-WebRequest -Uri "https://github.com/docker/compose/releases/download/$dockerComposeVersion/docker-compose-Windows-x86_64.exe" -OutFile $dockerComposePath  
+
+          [System.Environment]::SetEnvironmentVariable("PATH", $env:PATH + ";C:\Program Files\Docker\Docker\resources\bin", [System.EnvironmentVariableTarget]::Machine)  
 
       - name: Verify Docker Compose version
+        shell: pwsh
         run: |
-          docker-compose --version  
-
+          & "C:\Program Files\Docker\Docker\resources\bin\docker-compose.exe" --version  
+          & docker-compose --version
 
       - name: Run tests
         run: mvn test  # 运行测试
