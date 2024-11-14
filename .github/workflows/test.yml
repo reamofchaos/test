@@ -36,7 +36,6 @@ jobs:
           docker --version
 
       - name: Verify Docker installation
-        shell: bash
         run: docker --version
 
 #      - name: Download Milvus Installation Script
