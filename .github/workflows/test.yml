@@ -130,7 +130,7 @@ jobs:
           ls -l /usr/local/bin/docker-compose
           
           # 尝试运行docker-compose
-          docker-compose --version
+          /usr/local/bin/docker-compose --version
 
       - name: Run tests
         run: mvn test  # 运行测试
