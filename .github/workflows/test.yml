@@ -85,7 +85,7 @@ jobs:
         run: |
           $ErrorActionPreference = "Stop"  
           $dockerComposeVersion = "1.29.2"  # 根据需要更改版本号  
-          $dockerComposePath = "${{ github.workspace }}\docker\docker-compose\docker-compose.exe"  # 使用临时目录  
+          $dockerComposePath = "${{ github.workspace }}\docker-compose.exe"  # 使用临时目录  
           
           # 下载 Docker Compose  
           Invoke-WebRequest -Uri "https://github.com/docker/compose/releases/download/$dockerComposeVersion/docker-compose-Windows-x86_64.exe" -OutFile $dockerComposePath  
@@ -93,7 +93,7 @@ jobs:
       - name: Verify Docker Compose version
         shell: pwsh
         run: |
-          & "${{ github.workspace }}\docker\docker-compose\docker-compose.exe" --version  
+          & "${{ github.workspace }}\docker-compose.exe" --version  
           & docker-compose --version
 
       - name: Run tests
