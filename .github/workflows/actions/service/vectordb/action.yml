@@ -48,3 +48,12 @@ runs:
               for port in ${{ inputs.ports }}; do
                 bash ${{ github.workspace }}/.github/workflows/standalone_embed_$port.sh start
               done
+              sleep 5
+              for port in ${{ inputs.ports }}; do
+                if ss -tuln | grep -q ":$port "; then
+                  echo "Port 8080 is open."
+                else
+                  echo "Port 8080 is not open."
+                fi
+              done
+            

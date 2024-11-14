@@ -12,6 +12,3 @@ runs:
           curl -sfL https://raw.githubusercontent.com/milvus-io/milvus/master/scripts/standalone_embed.sh -o ${{ github.workspace }}/.github/workflows/standalone_embed.sh
           # Make the script executable
           chmod +x ${{ github.workspace }}/.github/workflows/standalone_embed.sh
-          echo "${{ github.action_path }}"
-          pwd
-          ls -l
