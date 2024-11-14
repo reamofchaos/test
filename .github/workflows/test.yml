@@ -57,6 +57,7 @@ jobs:
         name: Verify Docker installation on Windows
         shell: pwsh
         run: |
+          $env:Path += ";${{ github.workspace }}"
           docker --version
           docker-compose --version
 
