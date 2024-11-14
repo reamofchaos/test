@@ -21,13 +21,11 @@ jobs:
           cache: "maven"
 #          distribution: "temurin"
           distribution: ${{ runner.os == 'macOS' && 'liberica' || 'temurin' }}
-
       - if: runner.os == 'macOS'
         name: Install Docker on MacOS
         shell: bash
         run: |
           brew update
-#          brew install qemu
           brew install docker
           brew install colima
           LIMACTL_PATH=$(brew --prefix)/bin/limactl
