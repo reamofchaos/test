@@ -26,6 +26,7 @@ jobs:
         shell: bash
         run: |
           brew update
+          brew install qemu
           brew install docker
           brew install colima
           LIMACTL_PATH=$(brew --prefix)/bin/limactl
