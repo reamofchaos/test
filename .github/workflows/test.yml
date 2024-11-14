@@ -29,7 +29,6 @@ jobs:
           brew update
           brew install docker
           brew install colima
-          brew install qemu
           LIMACTL_PATH=$(brew --prefix)/bin/limactl
           sudo curl -L -o $LIMACTL_PATH https://github.com/mikekazakov/lima-nohvf/raw/master/limactl && sudo chmod +x $LIMACTL_PATH
           colima start --network-address --arch arm64 --vm-type=qemu
@@ -99,8 +98,8 @@ jobs:
       - name: Install Docker Compose
         run: |
           $dockerComposeVersion = "1.29.2"
-          sudo curl -L "https://github.com/docker/compose/releases/download/$dockerComposeVersion/docker-compose-darwin-x86_64" -o /usr/local/bin/docker-compose  
-          sudo chmod +x /usr/local/bin/docker-compose  
+          sudo curl -L "https://github.com/docker/compose/releases/download/$dockerComposeVersion/docker-compose-darwin-x86_64" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
 
       - name: Verify Docker Compose version
         run: docker-compose --version
