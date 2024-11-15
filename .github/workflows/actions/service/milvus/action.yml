@@ -63,6 +63,8 @@ runs:
                 docker ps -a
               done
               sleep 5
+              docker logs milvus19530-minio
+              ss -tuln
               for port in ${{ inputs.ports }}; do
                 if ss -tuln | grep -q ":$port "; then
                   echo "Port $port is open."
