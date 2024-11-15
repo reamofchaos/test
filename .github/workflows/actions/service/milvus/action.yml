@@ -42,8 +42,6 @@ runs:
               mkdir -p $port
               cp -f ${{ github.workspace }}/docker/milvus/docker-compose.yml $port/docker-compose-$port.yml
               sed -i"" -e "s/19530:19530/$port:19530/g" $port/docker-compose-$port.yml
-              sed -i"" -e "s/minio:9000/127.0.0.1:9000/g" $port/docker-compose-$port.yml
-              sed -i"" -e "s/etcd:2379/127.0.0.1:2379/g" $port/docker-compose-$port.yml
               sed -i"" -e "s/\/volumes/\/volumes$port/g" $port/docker-compose-$port.yml
               sed -i"" -e "s/name: milvus/name: milvus$port/g" $port/docker-compose-$port.yml
               sed -i"" -e "s/9000/$minio_port/g" $port/docker-compose-$port.yml
