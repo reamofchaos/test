@@ -40,7 +40,7 @@ public class MilvusTest {
             if (i>1){
                 try {
                     Thread.sleep(2000);
-                    System.out.println("retrying");
+                    System.out.println("retrying "+ i);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }

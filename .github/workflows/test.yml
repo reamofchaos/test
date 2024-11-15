@@ -87,6 +87,7 @@ jobs:
       - name: Run tests
         shell: bash
         run: |
+          docker ps -a
           if ss -tuln | grep -q ":19530 "; then
             echo "Port 19530 is open."
           else
