@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class MilvusTest {
-    private String uri = "grpc://127.0.0.1:19530";
-//    private String uri = "grpc://172.22.167.254:19530";
+    private String uri = "grpc://127.0.0.1:19532";
+//    private String uri = "grpc://172.22.167.254:19531";
 
     String username = "";
     String password = "";
@@ -33,9 +33,21 @@ public class MilvusTest {
     }
 
     public MilvusClientV2 createClient() {
-        MilvusClientV2Pool pool = MilvusClientPool.createPool(uri, username, password);
+        MilvusClientV2 client = null;
+        int i=0;
 
-        MilvusClientV2 client = pool.getClient("tmp");
+        while (client ==null && i++<10) {
+            if (i>1){
+                try {
+                    Thread.sleep(2000);
+                    System.out.println("retrying");
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            MilvusClientV2Pool pool = MilvusClientPool.createPool(uri, username, password);
+            client = pool.getClient("tmp");
+        }
         if (client == null) {
             throw new RuntimeException("Unable to create client");
         }
