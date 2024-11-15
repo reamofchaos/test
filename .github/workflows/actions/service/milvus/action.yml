@@ -1,0 +1,60 @@
+name: "milvus"
+description: "stop, clean and start milvus in order"
+inputs:
+    stop:
+        description: "whether to stop"
+        required: true
+    clean:
+        description: "whether to clean"
+        required: true
+    start:
+        description: "whether to start"
+        required: true
+    ports:
+        description: "ports to run on"
+        required: false
+        default: "19530"
+
+runs:
+    using: "composite"
+    steps:
+        - if: fromJSON(inputs.stop) || fromJSON(inputs.clean)
+          name: unimplemented
+          shell: bash
+          run: exit 1
+
+        - name: Download Milvus Installation Script
+          shell: bash
+          working-directory: ${{ github.action_path }}
+          run: |
+            curl -sfL https://github.com/milvus-io/milvus/releases/download/v2.4.15/milvus-standalone-docker-compose.yml -o docker-compose.yml
+
+        - name: Create Config for milvus docker compose
+          shell: bash
+          working-directory: ${{ github.action_path }}
+          run: |
+            for port in ${{ inputs.ports }}; do
+              mkdir -p $port
+              cp -f docker-compose.yml $port/docker-compose.yml
+              sed -i"" -e "s/19530:19530/$port:19530/g" $port/docker-compose.yml
+              sed -i"" -e "s/name: milvus/name: milvus$port/g" $port/docker-compose.yml
+              sed -i"" -e "s/19530:19530/$port:19530/g" $port/docker-compose.yml
+            done
+
+        - if: fromJSON(inputs.start)
+          name: Start milvus
+          shell: bash
+          working-directory: ${{ github.action_path }}
+          run: |
+              for port in ${{ inputs.ports }}; do
+                docker-compose -f $port/docker-compose.yml up -d
+              done
+              sleep 5
+              for port in ${{ inputs.ports }}; do
+                if ss -tuln | grep -q ":$port "; then
+                  echo "Port $port is open."
+                else
+                  echo "Port $port is not open."
+                fi
+              done
+            
