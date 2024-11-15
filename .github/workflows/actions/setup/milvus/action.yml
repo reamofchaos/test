@@ -1,0 +1,11 @@
+name: "milvus"
+description: "setup milvus"
+
+runs:
+    using: "composite"
+    steps:
+      - name: Download Milvus Installation Script
+        shell: bash
+        working-directory: ${{ github.action_path }}
+        run: |
+          curl -sfL https://github.com/milvus-io/milvus/releases/download/v2.4.15/milvus-standalone-docker-compose.yml -o ${{ github.workspace }}/docker-compose.yml

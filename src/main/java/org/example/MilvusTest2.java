@@ -2,7 +2,6 @@ package org.example;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import io.milvus.param.dml.QueryParam;
 import io.milvus.pool.MilvusClientV2Pool;
 import io.milvus.v2.client.MilvusClientV2;
 import io.milvus.v2.common.ConsistencyLevel;
@@ -18,10 +17,9 @@ import io.milvus.v2.service.vector.response.QueryResp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
-public class MilvusTest {
-    private String uri = "grpc://127.0.0.1:19530";
+public class MilvusTest2 {
+    private String uri = "grpc://127.0.0.1:19532";
 //    private String uri = "grpc://172.22.167.254:19531";
 
     String username = "";
@@ -29,7 +27,7 @@ public class MilvusTest {
 
     MilvusClientV2 client = createClient();
 
-    public MilvusTest() {
+    public MilvusTest2() {
     }
 
     public MilvusClientV2 createClient() {
@@ -40,7 +38,7 @@ public class MilvusTest {
             if (i>1){
                 try {
                     Thread.sleep(2000);
-                    System.out.println("retrying "+ i);
+                    System.out.println("retrying");
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }

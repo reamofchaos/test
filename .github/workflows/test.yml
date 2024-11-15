@@ -75,74 +75,23 @@ jobs:
           docker --version
           docker-compose --version
 
-#      - name: Download Milvus Installation Script
-#        run: |
-#          # Download the Milvus standalone embed script
-#          curl -sfL https://raw.githubusercontent.com/milvus-io/milvus/master/scripts/standalone_embed.sh -o standalone_embed.sh
-#          # Make the script executable
-#          chmod +x standalone_embed.sh
-
-#      - name: Start Milvus
-#        run: |
-#          # Start Milvus using the standalone embed script
-#          ./standalone_embed.sh start
-
-
-#      - name: Setup Milvus DB
-#        uses: ./.github/workflows/actions/setup/vectordb
-#
-#      - name: Run Milvus DB
-#        uses: ./.github/workflows/actions/service/vectordb
-#        with:
-#          stop: false
-#          clean: false
-#          start: true
-#          ports: 19530 19531 19532
-#
-#      - name: Verify Milvus is running
-#        run: |
-#          # List running Docker containers to verify Milvus is running
-#          docker ps
-#          # Wait for Milvus to fully start
-#          sleep 2
-#          # Print logs to verify
-#          docker logs $(docker ps -q --filter "name=milvus")
-
-#      - name: Install Docker Compose
-#        run: |
-#          DOCKER_COMPOSE_VERSION=1.29.2
-#          sudo curl -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-#          sudo chmod +x /usr/local/bin/docker-compose
-#
-#      - name: Verify Docker Compose version
-#        run: |
-#          docker-compose --version
-
-#      - name: Install Docker Compose
-#        shell: pwsh
-#        run: |
-#          $ErrorActionPreference = "Stop"
-#          $dockerComposeVersion = "1.29.2"  # 根据需要更改版本号
-#          $dockerComposePath = "${{ github.workspace }}\docker-compose.exe"  # 使用临时目录
-#
-#          # 下载 Docker Compose
-#          Invoke-WebRequest -Uri "https://github.com/docker/compose/releases/download/$dockerComposeVersion/docker-compose-Windows-x86_64.exe" -OutFile $dockerComposePath
-#
-#      - name: Verify Docker Compose version
-#        shell: pwsh
-#        run: |
-#          & "${{ github.workspace }}\docker-compose.exe" --version
-
-#      - name: Install Docker Compose
-#        run: |
-#          $dockerComposeVersion = "1.29.2"
-#          sudo curl -L "https://github.com/docker/compose/releases/download/$dockerComposeVersion/docker-compose-darwin-x86_64" -o /usr/local/bin/docker-compose
-#          sudo chmod +x /usr/local/bin/docker-compose
-#
-#      - name: Verify Docker Compose version
-#        run: docker-compose --version
+      - name: Run Milvus DB
+        uses: ./.github/workflows/actions/service/milvus
+        with:
+          stop: false
+          clean: false
+          start: true
+          ports: 19530 19531 19532
 
 
       - name: Run tests
-        run: mvn test  # 运行测试
+        shell: bash
+        run: |
+          docker ps -a
+          if ss -tuln | grep -q ":19530 "; then
+            echo "Port 19530 is open."
+          else
+            echo "Port 19530 is not open."
+          fi
+          mvn test  # 运行测试
 
