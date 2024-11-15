@@ -30,7 +30,6 @@ runs:
             curl -sfL https://github.com/milvus-io/milvus/releases/download/v2.4.15/milvus-standalone-docker-compose.yml -o docker-compose.yml
 
         - name: Create Config for milvus docker compose
-          shell: bash
           working-directory: ${{ github.action_path }}
           run: |
             tmp = 9002
