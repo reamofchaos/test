@@ -42,6 +42,7 @@ runs:
               mkdir -p $port
               cp -f ${{ github.workspace }}/docker/milvus/docker-compose.yml $port/docker-compose-$port.yml
               sed -i"" -e "s/19530:19530/$port:19530/g" $port/docker-compose-$port.yml
+              sed -i"" -e "s/\/volumes/\/volumes$port/g" $port/docker-compose-$port.yml
               sed -i"" -e "s/name: milvus/name: milvus$port/g" $port/docker-compose-$port.yml
               sed -i"" -e "s/9000/$minio_port/g" $port/docker-compose-$port.yml
               sed -i"" -e "s/minio server \/minio_data/minio server \/minio_data --address \":$minio_port\" --console-address \":$minio_port1\" #/g" $port/docker-compose-$port.yml
@@ -54,6 +55,7 @@ runs:
           run: |
               for port in ${{ inputs.ports }}; do
                 echo "Starting milvus on port $port"
+                docker stats
                 cat $port/docker-compose-$port.yml
                 docker-compose -f $port/docker-compose-$port.yml up
                 sleep 5
