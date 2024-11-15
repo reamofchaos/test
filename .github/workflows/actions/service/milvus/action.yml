@@ -33,7 +33,7 @@ runs:
           shell: bash
           working-directory: ${{ github.action_path }}
           run: |
-            TMP = 9002
+            TMP=9002
             for port in ${{ inputs.ports }}; do
               minio_port=$((TMP+=1))
               minio_port1=$((TMP+=1))
