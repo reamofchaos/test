@@ -41,7 +41,6 @@ runs:
               echo "minio_port1: $minio_port1"
               mkdir -p $port
               cp -f docker-compose.yml $port/docker-compose-$port.yml
-              sed -i -E "s|image: minio/minio:[^ ]*|image: quay.io/minio/minio:RELEASE.2022-08-02T23-59-16Z|" $port/docker-compose-$port.yml
               sed -i"" -e "s/19530:19530/$port:19530/g" $port/docker-compose-$port.yml
               sed -i"" -e "s/name: milvus/name: milvus$port/g" $port/docker-compose-$port.yml
               sed -i"" -e "s/MINIO_SECRET_KEY: minioadmin/MINIO_SECRET_KEY: minioadmin\n    ports:\n      - \"$minio_port:$minio_port\"\n      - \"$minio_port1:$minio_port1\"/" $port/docker-compose-$port.yml
