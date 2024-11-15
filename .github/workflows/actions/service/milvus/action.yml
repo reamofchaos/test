@@ -56,7 +56,7 @@ runs:
               for port in ${{ inputs.ports }}; do
                 echo "Starting milvus on port $port"
                 cat $port/docker-compose-$port.yml
-                docker-compose -f $port/docker-compose-$port.yml up
+                docker-compose -f $port/docker-compose-$port.yml up -d
                 sleep 5
                 docker ps -a
               done
