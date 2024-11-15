@@ -55,7 +55,6 @@ runs:
           run: |
               for port in ${{ inputs.ports }}; do
                 echo "Starting milvus on port $port"
-                docker stats
                 cat $port/docker-compose-$port.yml
                 docker-compose -f $port/docker-compose-$port.yml up
                 sleep 5
