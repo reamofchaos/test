@@ -85,5 +85,11 @@ jobs:
 
 
       - name: Run tests
-        run: mvn test  # 运行测试
+        shell: bash
+        run: |
+          if ss -tuln | grep -q ":19530 "; then
+            echo "Port 19530 is open."
+          else
+            echo "Port 19530 is not open."
+          mvn test  # 运行测试
 
