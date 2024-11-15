@@ -30,12 +30,13 @@ runs:
             curl -sfL https://github.com/milvus-io/milvus/releases/download/v2.4.15/milvus-standalone-docker-compose.yml -o docker-compose.yml
 
         - name: Create Config for milvus docker compose
+          shell: bash
           working-directory: ${{ github.action_path }}
           run: |
-            tmp = 9002
+            TMP = 9002
             for port in ${{ inputs.ports }}; do
-              minio_port=$((tmp+=1))
-              minio_port1=$((tmp+=1))
+              minio_port=$((TMP+=1))
+              minio_port1=$((TMP+=1))
               echo "minio_port: $minio_port"
               echo "minio_port1: $minio_port1"
               mkdir -p $port
