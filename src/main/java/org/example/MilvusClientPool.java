@@ -50,7 +50,7 @@ public class MilvusClientPool {
             .maxIdlePerKey(10) // 每个键的最大空闲连接数
             .maxTotalPerKey(20) // 每个键的最大总连接数
             .maxTotal(100) // 池中所有键的最大总连接数
-            .maxBlockWaitDuration(Duration.ofSeconds(5L)) // 获取连接的最大等待时间
+            .maxBlockWaitDuration(Duration.ofSeconds(60L)) // 获取连接的最大等待时间
             .minEvictableIdleDuration(Duration.ofSeconds(10L)) // 最小可驱逐的空闲时间
             .build();
 

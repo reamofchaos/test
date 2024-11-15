@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class MilvusTest {
-    private String uri = "http://127.0.0.1:19530";
+    private String uri = "grpc://127.0.0.1:19530";
 //    private String uri = "grpc://172.22.167.254:19530";
 
     String username = "";
