@@ -5,7 +5,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class MilvusTestTest1 extends TestCase {
+public class MilvusTest1Test extends TestCase {
 
     MilvusTest1 test;
     @Before
