@@ -37,6 +37,7 @@ runs:
             $dockerComposeVersion = "v2.30.1"
             $dockerComposePath = "${{ github.workspace }}\docker-compose.exe"
             Invoke-WebRequest -Uri "https://github.com/docker/compose/releases/download/$dockerComposeVersion/docker-compose-Windows-x86_64.exe" -OutFile $dockerComposePath
+            $env:Path += ";$dockerComposeDir"
             chmod +x $dockerComposePath
 
             docker --version
@@ -46,6 +47,8 @@ runs:
           name: Test Docker Compose
           shell: bash
           run: |
+            echo $env:Path
+            echo "test docker-compose"
             docker -v
             docker-compose -v
 
