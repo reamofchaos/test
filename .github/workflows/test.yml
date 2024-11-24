@@ -15,9 +15,6 @@ jobs:
 
     outputs:
       host: ${{ steps.db_info.outputs.host }}
-      port: ${{ steps.db_info.outputs.port }}
-      port1: ${{ steps.db_info.outputs.port1 }}
-      port2: ${{ steps.db_info.outputs.port2 }}
 
     steps:
       - name: Checkout repository
@@ -32,9 +29,6 @@ jobs:
         id: db_info
         run: |
           echo "host=$(hostname -I | awk '{print $1}')" >> $GITHUB_OUTPUT
-          echo "port=19530" >> $GITHUB_OUTPUT
-          echo "port1=19531" >> $GITHUB_OUTPUT
-          echo "port2=19532" >> $GITHUB_OUTPUT
 
   Java-Test:
     needs: Run_Milvus
@@ -45,13 +39,21 @@ jobs:
     runs-on: ${{ matrix.os }}
     env:
       host: ${{ needs.Run_Milvus.outputs.host }}
-      port: ${{ needs.Run_Milvus.outputs.port }}
-      port1: ${{ needs.Run_Milvus.outputs.port1 }}
-      port2: ${{ needs.Run_Milvus.outputs.port2 }}
 
     steps:
+      - name: show env
+        shell: bash
+        run: |
+          echo "${{ env.host }}"
+
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: replace host
+        run: |
+          sed -i"" -e "s/127.0.0.1/${{ env.host }}/g" src/main/java/org/example/MilvusTest.java
+          sed -i"" -e "s/127.0.0.1/${{ env.host }}/g" src/main/java/org/example/MilvusTest1.java
+          sed -i"" -e "s/127.0.0.1/${{ env.host }}/g" src/main/java/org/example/MilvusTest2.java
 
       - if : runner.os == 'macOS'
         name: Environment dependence
@@ -65,14 +67,12 @@ jobs:
         with:
           java: "8"
 
-      - name: show env
+      - name: Run tests
         shell: bash
         run: |
-          echo "${{ env.host }}"
-          echo "${{ env.port }}"
-          echo "${{ env.port1 }}"
-          echo "${{ env.port2 }}"
-          echo "java version: $(java -version)"
+          mvn clean package
+
+
 
 #      - if: runner.os == 'Windows'
 #        name: Verify Docker installation on Windows
