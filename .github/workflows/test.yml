@@ -10,7 +10,7 @@ jobs:
       fail-fast: false
       matrix:
 #        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
-        os: ["ubuntu-latest"]
+        os: ["ubuntu-latest", "macos-latest"]
     runs-on: ${{ matrix.os }}
 
     outputs:
@@ -30,31 +30,6 @@ jobs:
         run: |
           echo "host=$(hostname -I | awk '{print $1}')" >> $GITHUB_OUTPUT
 
-  Java-Test:
-    needs: Run_Milvus
-    strategy:
-      matrix:
-        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
-
-    runs-on: ${{ matrix.os }}
-    env:
-      host: ${{ needs.Run_Milvus.outputs.host }}
-
-    steps:
-      - name: show env
-        shell: bash
-        run: |
-          echo "${{ env.host }}"
-
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: replace host
-        run: |
-          sed -i"" -e "s/127.0.0.1/${{ env.host }}/g" src/main/java/org/example/MilvusTest.java
-          sed -i"" -e "s/127.0.0.1/${{ env.host }}/g" src/main/java/org/example/MilvusTest1.java
-          sed -i"" -e "s/127.0.0.1/${{ env.host }}/g" src/main/java/org/example/MilvusTest2.java
-
       - if : runner.os == 'macOS'
         name: Environment dependence
         uses: ./.github/actions/dependence
@@ -71,7 +46,7 @@ jobs:
         shell: bash
         run: |
           for port in 19530 19531 19532; do
-            if ss -tuln | grep -q ":$port "; then
+            if netstat -an | grep -q ".*:$port.*LISTEN"; then
               echo "Port $port is open."
             else
               echo "Port $port is not open."
@@ -82,6 +57,59 @@ jobs:
         shell: bash
         run: |
           mvn clean package
+
+#  Java-Test:
+#    needs: Run_Milvus
+#    strategy:
+#      matrix:
+#        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
+#
+#    runs-on: ${{ matrix.os }}
+#    env:
+#      host: ${{ needs.Run_Milvus.outputs.host }}
+#
+#    steps:
+#      - name: show env
+#        shell: bash
+#        run: |
+#          echo "${{ env.host }}"
+#
+#      - name: Checkout repository
+#        uses: actions/checkout@v4
+#
+#      - name: replace host
+#        run: |
+#          sed -i"" -e "s/127.0.0.1/${{ env.host }}/g" src/main/java/org/example/MilvusTest.java
+#          sed -i"" -e "s/127.0.0.1/${{ env.host }}/g" src/main/java/org/example/MilvusTest1.java
+#          sed -i"" -e "s/127.0.0.1/${{ env.host }}/g" src/main/java/org/example/MilvusTest2.java
+#
+#      - if : runner.os == 'macOS'
+#        name: Environment dependence
+#        uses: ./.github/actions/dependence
+#        with:
+#          java: "11"
+#
+#      - if : runner.os != 'macOS'
+#        name: Environment dependence
+#        uses: ./.github/actions/dependence
+#        with:
+#          java: "8"
+#
+#      - name: network test
+#        shell: bash
+#        run: |
+#          for port in 19530 19531 19532; do
+#            if ss -tuln | grep -q ":$port "; then
+#              echo "Port $port is open."
+#            else
+#              echo "Port $port is not open."
+#            fi
+#          done
+#
+#      - name: Run tests
+#        shell: bash
+#        run: |
+#          mvn clean package
 
 
 
