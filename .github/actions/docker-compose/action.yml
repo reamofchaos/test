@@ -34,11 +34,20 @@ runs:
           shell: pwsh
           run: |
             $ErrorActionPreference = "Stop"
-            Invoke-WebRequest -Uri "https://github.com/docker/compose/releases/latest/download/docker-compose-Windows-x86_64.exe" -OutFile "$env:ProgramFiles\Docker\Docker\Resources\bin\docker-compose.exe"
+            $dockerComposeVersion = "v2.30.1"
+            $dockerComposePath = "${{ github.workspace }}\docker-compose.exe"
+            Invoke-WebRequest -Uri "https://github.com/docker/compose/releases/download/$dockerComposeVersion/docker-compose-Windows-x86_64.exe" -OutFile $dockerComposePath
+            chmod +x $dockerComposePath
 
             docker --version
             docker-compose --version  
-            
+
+        - if: runner.os == 'Windows'
+          name: Test Docker Compose
+          shell: bash
+          run: |
+            docker -v
+            docker-compose -v
 
         - if: runner.os == 'Linux'
           name: Install Docker Compose
