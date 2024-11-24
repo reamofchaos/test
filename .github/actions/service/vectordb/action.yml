@@ -49,7 +49,7 @@ runs:
         - if: fromJSON(inputs.start) && runner.os != 'Windows'
           name: Start milvus
           shell: bash
-          working-directory: ${{ github.action_path }}
+          working-directory: ${{ github.workspace }}
           run: |
               for port in ${{ inputs.ports }}; do
                 docker-compose -f $port/docker-compose-$port.yml up -d
@@ -67,18 +67,20 @@ runs:
         - if: fromJSON(inputs.start) && runner.os == 'Windows'
           name: Start milvus on Windows
           shell: pwsh
-          working-directory: ${{ github.action_path }}
+          working-directory: ${{ github.workspace }}
           run: |
               $env:Path += ";${{ github.workspace }}"
 
-              for port in ${{ inputs.ports }}; do
-                docker-compose -f $port/docker-compose-$port.yml up -d
+              for ($port in ${{ inputs.ports }}) do
+                docker-compose -f "$port/docker-compose-$port.yml" up -d
               done
-              sleep 5
-              for port in ${{ inputs.ports }}; do
-                if ss -tuln | grep -q ":$port "; then
-                  echo "Port $port is open."
-                else
-                  echo "Port $port is not open."
-                fi
+            
+              Start-Sleep -Seconds 5  
+              
+              for ($port in ${{ inputs.ports }}) do
+                if (Get-NetTCPConnection -State Listen | Where-Object { $_.LocalPort -eq $port }) {  
+                  Write-Host "Port $port is open."
+                } else {
+                  Write-Host "Port $port is not open."
+                }
               done
