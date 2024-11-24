@@ -43,19 +43,17 @@ runs:
             $env:Path += ";$dockerComposeDir"
             chmod +x $dockerComposePath
 
-            echo $env:Path
-            echo "test docker"
             docker --version
             docker-compose --version  
 
-        - if: runner.os == 'Windows'
-          name: Test Docker Compose
-          shell: bash
-          run: |
-            echo $env:Path
-            echo "test docker-compose"
-            docker -v
-            docker-compose -v
+#        - if: runner.os == 'Windows'
+#          name: Test Docker Compose
+#          shell: bash
+#          run: |
+#            echo $env:Path
+#            echo "test docker-compose"
+#            docker -v
+#            docker-compose -v
 
         - if: runner.os == 'Linux'
           name: Install Docker Compose
