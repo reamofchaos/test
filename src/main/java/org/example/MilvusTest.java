@@ -17,12 +17,13 @@ import io.milvus.v2.service.vector.response.QueryResp;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class MilvusTest {
     private String uri = "grpc://127.0.0.1:19530";
-//    private String uri = "grpc://172.22.167.254:19531";
+//    private String uri = "grpc://172.18.71.153:19530";
 
     String username = "";
     String password = "";
@@ -45,8 +46,8 @@ public class MilvusTest {
                     throw new RuntimeException(e);
                 }
             }
-            MilvusClientV2Pool pool = MilvusClientPool.createPool(uri, username, password);
-            client = pool.getClient("tmp");
+            MilvusClientV2Pool pool = MilvusClientPool.createPool(uri, username, password,MilvusClientPool.getPoolConfig(new HashMap<>()));
+            client = pool.getClient("default");
         }
         if (client == null) {
             throw new RuntimeException("Unable to create client");
