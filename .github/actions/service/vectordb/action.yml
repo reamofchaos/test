@@ -52,6 +52,7 @@ runs:
           working-directory: ${{ github.workspace }}
           run: |
               for port in ${{ inputs.ports }}; do
+                sudo chown -R $(whoami) $port/
                 docker-compose -f $port/docker-compose-$port.yml up -d
               done
               sleep 5
@@ -70,14 +71,15 @@ runs:
           working-directory: ${{ github.workspace }}
           run: |
               $env:Path += ";${{ github.workspace }}"
+              $ports = "${{ inputs.ports }}" -split ' '
 
-              for ($port in ${{ inputs.ports }}) do
+              for ($port in $ports) do
                 docker-compose -f "$port/docker-compose-$port.yml" up -d
               done
             
               Start-Sleep -Seconds 5  
               
-              for ($port in ${{ inputs.ports }}) do
+              for ($port in $ports) do
                 if (Get-NetTCPConnection -State Listen | Where-Object { $_.LocalPort -eq $port }) {  
                   Write-Host "Port $port is open."
                 } else {
