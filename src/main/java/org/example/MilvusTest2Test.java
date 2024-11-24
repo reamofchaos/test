@@ -1,16 +1,16 @@
-package org.example;
-
-import junit.framework.TestCase;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-public class MilvusTest1Test extends TestCase {
+//package org.example;
 //
-//    MilvusTest1 test;
+//import junit.framework.TestCase;
+//import org.junit.After;
+//import org.junit.Before;
+//import org.junit.Test;
+//
+//public class MilvusTest2Test extends TestCase {
+//
+//    MilvusTest2 test;
 //    @Before
 //    public void setUp() {
-//        test = new MilvusTest1();
+//        test = new MilvusTest2();
 //        try {
 //            test.create();
 //        } catch (InterruptedException e) {
@@ -35,4 +35,4 @@ public class MilvusTest1Test extends TestCase {
 //        assertEquals(r1, 10);
 //        System.out.println("search test ok");
 //    }
-}
+//}

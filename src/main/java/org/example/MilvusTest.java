@@ -38,7 +38,7 @@ public class MilvusTest {
         int i=0;
         System.out.println("uri : "+uri);
 
-        while (client ==null && i++<30) {
+        while (client ==null && i++<5) {
             if (i>1){
                 try {
                     Thread.sleep(2000);

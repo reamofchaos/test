@@ -5,85 +5,61 @@ on:
     branches: [ master ]  # 仅当 Pull Request 目标分支是 main 时触发
 
 jobs:
-  Run_Milvus:
-    strategy:
-      fail-fast: false
-      matrix:
-#        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
-        os: ["ubuntu-latest", "macos-latest"]
-    runs-on: ${{ matrix.os }}
-
-    outputs:
-      host: ${{ steps.db_info.outputs.host }}
-
-
+  job1:
+    runs-on: ubuntu-latest
+    services:
+      myservice:
+        image: nginx:latest  # 使用 nginx 作为示例服务
+        ports:
+          - 8080:80  # 将服务端口映射到主机端口
+        options: >-
+          --health-cmd="curl --fail http://localhost/ || exit 1"  
+          --health-interval=5s  
+          --health-timeout=5s  
+          --health-retries=3  
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4  # 检出代码
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      - if : runner.os == 'macOS'
-        name: Environment dependence
-        uses: ./.github/actions/dependence
-        with:
-          java: "11"
-
-      - if : runner.os != 'macOS'
-        name: Environment dependence
-        uses: ./.github/actions/dependence
-        with:
-          java: "8"
-
-      - name: Run DB
-        uses: ./.github/actions/dbRunner
-        with:
-          DB-name: "VectorDB"
-
-      - name: Set output
-        id: db_info
+      - name: Wait for the service to be ready
         run: |
-          echo "host=$(hostname -I | awk '{print $1}')" >> $GITHUB_OUTPUT
+          echo "Waiting for the service to be ready..."  
+          until curl --output /dev/null --silent --head --fail http://localhost:8080; do  
+            printf '.'  
+            sleep 5  
+          done  
+          echo "Service is up!"  
 
-      - name: network test
-        shell: bash
+  job2:
+    runs-on: windows-latest
+    needs: job1  # 确保 job1 完成后再运行 job2
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Access the service
         run: |
-          for port in 19530 19531 19532; do
-            if netstat -an | grep -q ".*:$port.*LISTEN"; then
-              echo "Port $port is open."
-            else
-              echo "Port $port is not open."
-            fi
-          done
+          Invoke-WebRequest -Uri http://localhost:8080  
+          Write-Host "Service is accessible from job2!"  
 
-      - name: Run tests
-        shell: bash
-        run: |
-          mvn clean package
-
-#  Java-Test:
-#    needs: Run_Milvus
+#  Run_Milvus:
 #    strategy:
+#      fail-fast: false
 #      matrix:
-#        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
-#
+##        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
+#        os: ["ubuntu-latest", "macos-latest"]
 #    runs-on: ${{ matrix.os }}
-#    env:
-#      host: ${{ needs.Run_Milvus.outputs.host }}
+#
+#    outputs:
+#      host: ${{ steps.db_info.outputs.host }}
+#
+#
 #
 #    steps:
-#      - name: show env
-#        shell: bash
-#        run: |
-#          echo "${{ env.host }}"
-#
 #      - name: Checkout repository
-#        uses: actions/checkout@v4
-#
-#      - name: replace host
-#        run: |
-#          sed -i"" -e "s/127.0.0.1/${{ env.host }}/g" src/main/java/org/example/MilvusTest.java
-#          sed -i"" -e "s/127.0.0.1/${{ env.host }}/g" src/main/java/org/example/MilvusTest1.java
-#          sed -i"" -e "s/127.0.0.1/${{ env.host }}/g" src/main/java/org/example/MilvusTest2.java
+#        uses: actions/checkout@v4  # 检出代码
 #
 #      - if : runner.os == 'macOS'
 #        name: Environment dependence
@@ -97,11 +73,21 @@ jobs:
 #        with:
 #          java: "8"
 #
+#      - name: Run DB
+#        uses: ./.github/actions/dbRunner
+#        with:
+#          DB-name: "VectorDB"
+#
+#      - name: Set output
+#        id: db_info
+#        run: |
+#          echo "host=$(hostname -I | awk '{print $1}')" >> $GITHUB_OUTPUT
+#
 #      - name: network test
 #        shell: bash
 #        run: |
 #          for port in 19530 19531 19532; do
-#            if ss -tuln | grep -q ":$port "; then
+#            if netstat -an | grep -q ".*:$port.*LISTEN"; then
 #              echo "Port $port is open."
 #            else
 #              echo "Port $port is not open."
@@ -112,41 +98,4 @@ jobs:
 #        shell: bash
 #        run: |
 #          mvn clean package
-
-
-
-#      - if: runner.os == 'Windows'
-#        name: Verify Docker installation on Windows
-#        shell: pwsh
-#        run: |
-#          $env:Path += ";${{ github.workspace }}"
-#          docker --version
-#          docker-compose --version
-#
-#      - if: runner.os != 'Windows'
-#        name: Verify Docker installation
-#        shell: bash
-#        run: |
-#          docker --version
-#          docker-compose --version
-#
-#      - name: Run Milvus DB
-#        uses: ./.github/workflows/actions/service/milvus
-#        with:
-#          stop: false
-#          clean: false
-#          start: true
-#          ports: 19530 19531 19532
-#
-#
-#      - name: Run tests
-#        shell: bash
-#        run: |
-#          docker ps -a
-#          if ss -tuln | grep -q ":19530 "; then
-#            echo "Port 19530 is open."
-#          else
-#            echo "Port 19530 is not open."
-#          fi
-#          mvn test  # 运行测试
 
