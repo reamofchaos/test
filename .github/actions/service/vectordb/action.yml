@@ -65,6 +65,15 @@ runs:
               done
               docker ps -a
 
+        - name: show logs
+          shell: bash
+          working-directory: ${{ github.workspace }}
+          run: |
+            docker ps
+            docker logs milvus19530-standalone
+            docker logs milvus19530-minio
+            docker logs milvus19530-etcd
+
 #        - if: fromJSON(inputs.start) && runner.os == 'Windows'
 #          name: Start milvus
 #          shell: bash
