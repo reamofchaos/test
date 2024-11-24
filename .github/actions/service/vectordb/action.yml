@@ -43,6 +43,8 @@ runs:
                 sed -i"" -e "s/19530:19530/$port:19530/g" $port/docker-compose-$port.yml
                 sed -i"" -e "s/\/volumes/\/volumes$port/g" $port/docker-compose-$port.yml
                 sed -i"" -e "s/name: milvus/name: milvus$port/g" $port/docker-compose-$port.yml
+                sed -i '/^\s*volumes:/ s/^/#/' $port/docker-compose-$port.yml
+                sed -i 's/^\(\s*-\s*\${DOCKER_VOLUME_DIRECTORY.*\)/#\1/' $port/docker-compose-$port.yml
               done
               echo "docker-compose.yml created successfully"
 
@@ -72,17 +74,17 @@ runs:
           run: |
               $env:Path += ";${{ github.workspace }}"
               $ports = "${{ inputs.ports }}" -split ' '
-
-              for ($port in $ports) do
+            
+              foreach ($port in $ports){
                 docker-compose -f "$port/docker-compose-$port.yml" up -d
-              done
+              }
             
               Start-Sleep -Seconds 5  
-              
-              for ($port in $ports) do
+            
+              foreach ($port in $ports){
                 if (Get-NetTCPConnection -State Listen | Where-Object { $_.LocalPort -eq $port }) {  
                   Write-Host "Port $port is open."
                 } else {
                   Write-Host "Port $port is not open."
                 }
-              done
+              }
