@@ -41,7 +41,7 @@ jobs:
 
       - name: Access the service
         run: |
-          Invoke-WebRequest -Uri http://localhost:8080  
+          Invoke-WebRequest -Uri http://myservice:8080  
           Write-Host "Service is accessible from job2!"  
 
 #  Run_Milvus:
