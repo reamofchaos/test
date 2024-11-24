@@ -28,11 +28,10 @@ jobs:
 
       - id: db_info
         run: |
-          echo "::set-output name=host::$(hostname -I | awk '{print $1}')"
-          echo "::set-output name=port::19530"
-          echo "::set-output name=port1::19531"
-          echo "::set-output name=port2::19532"
-
+          echo "host=$(hostname -I | awk '{print $1}')" >> $GITHUB_OUTPUT
+          echo "port=19530" >> $GITHUB_OUTPUT
+          echo "port=19531" >> $GITHUB_OUTPUT
+          echo "port=19532" >> $GITHUB_OUTPUT
 
   Java-Test:
     needs: Run_Milvus
@@ -61,10 +60,10 @@ jobs:
         shell: bash
         run: |
           java -version
-          echo ${{ needs.Run_Milvus.outputs.host }}
-          echo ${{ needs.Run_Milvus.outputs.port }}
-          echo ${{ needs.Run_Milvus.outputs.port1 }}
-          echo ${{ needs.Run_Milvus.outputs.port2 }}
+          echo "${{ needs.Run_Milvus.outputs.host }}"
+          echo "${{ needs.Run_Milvus.outputs.port }}"
+          echo "${{ needs.Run_Milvus.outputs.port1 }}"
+          echo "${{ needs.Run_Milvus.outputs.port2 }}"
 
 #      - if: runner.os == 'Windows'
 #        name: Verify Docker installation on Windows
