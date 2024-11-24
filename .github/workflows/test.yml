@@ -5,16 +5,45 @@ on:
     branches: [ master ]  # 仅当 Pull Request 目标分支是 main 时触发
 
 jobs:
-  DB-Test:
+  Run_Milvus:
     strategy:
       fail-fast: false
       matrix:
 #        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
-        os: ["windows-latest"]
+        os: ["ubuntu-latest"]
     runs-on: ${{ matrix.os }}
+
+    outputs:
+      db_host: ${{ steps.db_info.outputs.host }}
+      db_port: ${{ steps.db_info.outputs.port }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4  # 检出代码
+
+      - name: Run DB
+        uses: ./.github/actions/dbRunner
+        with:
+          DB-name: "VectorDB"
+
+      - id: db_info
+        run: |
+          echo "::set-output name=host::$(hostname -I | awk '{print $1}')"
+          echo "::set-output name=port::19530"
+          echo "::set-output name=port1::19531"
+          echo "::set-output name=port2::19532"
+
+
+  Java-Test:
+    needs: Run_Milvus
+    strategy:
+      matrix:
+        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - if : runner.os == 'macOS'
         name: Environment dependence
@@ -28,12 +57,14 @@ jobs:
         with:
           java: "8"
 
-      - name: Run DB
-        uses: ./.github/actions/dbRunner
-        with:
-          DB-name: "VectorDB"
-          Root-Dir-Path: "IGinX"
-
+      - name: show env
+        shell: bash
+        run: |
+          java -version
+          echo ${{ needs.Run_Milvus.outputs.host }}
+          echo ${{ needs.Run_Milvus.outputs.port }}
+          echo ${{ needs.Run_Milvus.outputs.port1 }}
+          echo ${{ needs.Run_Milvus.outputs.port2 }}
 
 #      - if: runner.os == 'Windows'
 #        name: Verify Docker installation on Windows
