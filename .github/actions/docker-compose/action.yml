@@ -37,9 +37,14 @@ runs:
             $dockerComposeVersion = "v2.30.1"
             $dockerComposePath = "${{ github.workspace }}\docker-compose.exe"
             Invoke-WebRequest -Uri "https://github.com/docker/compose/releases/download/$dockerComposeVersion/docker-compose-Windows-x86_64.exe" -OutFile $dockerComposePath
+            $dockerComposeDir = [System.IO.Path]::GetDirectoryName($dockerComposePath)
+            [System.Environment]::SetEnvironmentVariable("Path", "$env:Path;$dockerComposeDir", [System.EnvironmentVariableTarget]::Machine)
+            
             $env:Path += ";$dockerComposeDir"
             chmod +x $dockerComposePath
 
+            echo $env:Path
+            echo "test docker"
             docker --version
             docker-compose --version  
 
