@@ -40,6 +40,12 @@ jobs:
         os: ["ubuntu-latest", "macos-latest", "windows-latest"]
 
     runs-on: ${{ matrix.os }}
+    env:
+      host: ${{ needs.Run_Milvus.outputs.host }}
+      port: ${{ needs.Run_Milvus.outputs.port }}
+      port1: ${{ needs.Run_Milvus.outputs.port1 }}
+      port2: ${{ needs.Run_Milvus.outputs.port2 }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -59,11 +65,11 @@ jobs:
       - name: show env
         shell: bash
         run: |
-          java -version
-          echo "${{ needs.Run_Milvus.outputs.host }}"
-          echo "${{ needs.Run_Milvus.outputs.port }}"
-          echo "${{ needs.Run_Milvus.outputs.port1 }}"
-          echo "${{ needs.Run_Milvus.outputs.port2 }}"
+          echo "${{ env.host }}"
+          echo "${{ env.port }}"
+          echo "${{ env.port1 }}"
+          echo "${{ env.port2 }}"
+          echo "java version: $(java -version)"
 
 #      - if: runner.os == 'Windows'
 #        name: Verify Docker installation on Windows
