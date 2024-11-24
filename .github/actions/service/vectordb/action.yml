@@ -88,25 +88,38 @@ runs:
 
         - if: fromJSON(inputs.start) && runner.os == 'Windows'
           name: Start milvus on Windows
-          shell: pwsh
+          shell: bash
           working-directory: ${{ github.workspace }}
           run: |
-              $env:Path += ";${{ github.workspace }}"
-              $ports = "${{ inputs.ports }}" -split ' '
-              
-              docker-compose -v
-              docker ps
+            pwd
+            echo ${{ github.workspace }}
+            cp -f docker/milvus/standalone_embed.sh 19530/standalone_embed.sh
             
-              foreach ($port in $ports){
-                docker-compose -f "$port/docker-compose-$port.yml" up -d
-              }
+            docker ps
+            bash 19530/standalone_embed.sh start
+            docker ps -a
 
-              Start-Sleep -Seconds 5
-
-              foreach ($port in $ports){
-                if (Get-NetTCPConnection -State Listen | Where-Object { $_.LocalPort -eq $port }) {
-                  Write-Host "Port $port is open."
-                } else {
-                  Write-Host "Port $port is not open."
-                }
-              }
+#        - if: fromJSON(inputs.start) && runner.os == 'Windows'
+#          name: Start milvus on Windows
+#          shell: pwsh
+#          working-directory: ${{ github.workspace }}
+#          run: |
+#            $env:Path += ";${{ github.workspace }}"
+#            $ports = "${{ inputs.ports }}" -split ' '
+#
+#            docker-compose -v
+#            docker ps
+#
+#            foreach ($port in $ports){
+#              docker-compose -f "$port/docker-compose-$port.yml" up -d
+#            }
+#
+#            Start-Sleep -Seconds 5
+#
+#            foreach ($port in $ports){
+#              if (Get-NetTCPConnection -State Listen | Where-Object { $_.LocalPort -eq $port }) {
+#                Write-Host "Port $port is open."
+#              } else {
+#                Write-Host "Port $port is not open."
+#              }
+#            }
