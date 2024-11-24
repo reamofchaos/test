@@ -23,6 +23,7 @@ jobs:
         uses: ./.github/actions/dbRunner
         with:
           DB-name: "VectorDB"
+          Root-Dir-Path: "IGinX"
 
 
 #      - if: runner.os == 'Windows'

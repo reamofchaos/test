@@ -14,6 +14,10 @@ inputs:
         description: "ports to run on"
         required: false
         default: "19530"
+    Root-Dir-Path:
+      description: "the path of IGinX root directory"
+      required: false
+      default: "${GITHUB_WORKSPACE}"
 
 runs:
     using: "composite"
@@ -35,7 +39,7 @@ runs:
               echo ${{ github.workspace }}
               for port in ${{ inputs.ports }}; do
                 mkdir -p $port
-                cp -f ${{ github.workspace }}/docker/milvus/docker-compose.yml $port/docker-compose-$port.yml
+                cp -f ${{ inputs.Root-Dir-Path }}/docker/milvus/docker-compose.yml $port/docker-compose-$port.yml
                 sed -i"" -e "s/19530:19530/$port:19530/g" $port/docker-compose-$port.yml
                 sed -i"" -e "s/\/volumes/\/volumes$port/g" $port/docker-compose-$port.yml
                 sed -i"" -e "s/name: milvus/name: milvus$port/g" $port/docker-compose-$port.yml
