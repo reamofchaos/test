@@ -1,5 +1,5 @@
-name: "redis"
-description: "stop, clean and start redis in order"
+name: "milvus"
+description: "stop, clean and start milvus in order"
 inputs:
     stop:
         description: "whether to stop"
@@ -23,30 +23,32 @@ runs:
           shell: bash
           run: exit 1
 
-        - name: Create Config and Data Directory
+        - name: Setup docker compose
+          uses: ./.github/actions/docker-compose
+
+        - if: fromJSON(inputs.start)
+          name: Create Config for milvus docker compose
           shell: bash
           working-directory: ${{ github.action_path }}
           run: |
-            pwd
-            ls -l
-            for port in ${{ inputs.ports }}; do
-              cp -f ${{ github.workspace }}/.github/workflows/standalone_embed.sh ${{ github.workspace }}/.github/workflows/standalone_embed_$port.sh
-              sed -i"" -e "s/19530/$port/g" ${{ github.workspace }}/.github/workflows/standalone_embed_$port.sh
-              sed -i"" -e "s/volumes/volumes_$port/g" ${{ github.workspace }}/.github/workflows/standalone_embed_$port.sh
-              sed -i"" -e "s/\$(pwd)\/embedEtcd.yaml/\$(pwd)\/embedEtcd_$port.yaml/g" ${{ github.workspace }}/.github/workflows/standalone_embed_$port.sh
-              sed -i"" -e "s/> embedEtcd.yaml/> embedEtcd_$port.yaml/g" ${{ github.workspace }}/.github/workflows/standalone_embed_$port.sh
-              sed -i"" -e "s/\$(pwd)\/user.yaml/\$(pwd)\/user_$port.yaml/g" ${{ github.workspace }}/.github/workflows/standalone_embed_$port.sh
-              sed -i"" -e "s/> user.yaml/> user_$port.yaml/g" ${{ github.workspace }}/.github/workflows/standalone_embed_$port.sh
-              chmod +x ${{ github.workspace }}/.github/workflows/standalone_embed_$port.sh
-            done
+              pwd
+              echo ${{ github.workspace }}
+              for port in ${{ inputs.ports }}; do
+                mkdir -p $port
+                cp -f ${{ github.workspace }}/docker/milvus/docker-compose.yml $port/docker-compose-$port.yml
+                sed -i"" -e "s/19530:19530/$port:19530/g" $port/docker-compose-$port.yml
+                sed -i"" -e "s/\/volumes/\/volumes$port/g" $port/docker-compose-$port.yml
+                sed -i"" -e "s/name: milvus/name: milvus$port/g" $port/docker-compose-$port.yml
+              done
+              echo "docker-compose.yml created successfully"
 
-        - if: fromJSON(inputs.start)
+        - if: fromJSON(inputs.start) && runner.os != 'Windows'
           name: Start milvus
           shell: bash
           working-directory: ${{ github.action_path }}
           run: |
               for port in ${{ inputs.ports }}; do
-                bash ${{ github.workspace }}/.github/workflows/standalone_embed_$port.sh start
+                docker-compose -f $port/docker-compose-$port.yml up -d
               done
               sleep 5
               for port in ${{ inputs.ports }}; do
@@ -56,4 +58,23 @@ runs:
                   echo "Port $port is not open."
                 fi
               done
-            
+              docker ps -a
+
+        - if: fromJSON(inputs.start) && runner.os == 'Windows'
+          name: Start milvus on Windows
+          shell: pwsh
+          working-directory: ${{ github.action_path }}
+          run: |
+              $env:Path += ";${{ github.workspace }}"
+
+              for port in ${{ inputs.ports }}; do
+                docker-compose -f $port/docker-compose-$port.yml up -d
+              done
+              sleep 5
+              for port in ${{ inputs.ports }}; do
+                if ss -tuln | grep -q ":$port "; then
+                  echo "Port $port is open."
+                else
+                  echo "Port $port is not open."
+                fi
+              done

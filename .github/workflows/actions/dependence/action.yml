@@ -1,0 +1,63 @@
+name: "dependence-setup"
+description: "environment dependence setup"
+inputs:
+    python-version:
+        description: "python version"
+        required: false
+        default: 3.9
+    java:
+        description: "java version"
+        required: false
+        default: 8
+    os:
+        description: "running environment"
+        required: false
+        default: ubuntu-latest
+    scope:
+        description: "partial dependency required"
+        required: false
+        default: all
+        # all: setup all
+    docker-required:
+        description: "is docker needed in this test"
+        required: false
+        default: "false"
+
+runs:
+    using: "composite"
+    steps:
+        # need to set up timezone and enlarge JVM heap size manually on windows
+        - if: runner.os == 'Windows'
+          name: Set Dynamic Timezone
+          shell: cmd
+          run: |
+              tzutil /s "China Standard Time"
+              echo "JAVA_OPTS=-Xmx4g -Xms2g" >> %GITHUB_ENV%
+
+        # we use a patched version of lima(slower) because colima cannot start on M1 chips and the docker task is lightweight.
+        - if: runner.os == 'macOS' &&  inputs.docker-required=='true'
+          name: Install Docker on MacOS
+          shell: bash
+          run: |
+              brew update
+              brew install docker qemu
+              brew install colima
+              LIMACTL_PATH=$(brew --prefix)/bin/limactl
+              sudo curl -L -o $LIMACTL_PATH https://github.com/mikekazakov/lima-nohvf/raw/master/limactl && sudo chmod +x $LIMACTL_PATH
+              colima start --network-address --arch arm64 --vm-type=qemu
+              docker --version
+
+        - if: inputs.scope=='all'
+          name: Set up Python ${{ inputs.python-version }}
+          uses: actions/setup-python@v5
+          with:
+              python-version: ${{ inputs.python-version }}
+              cache: "pip" # caching pip dependencies
+
+        - name: Set up JDK ${{ inputs.java }}
+          uses: actions/setup-java@v4
+          with:
+              java-version: ${{ inputs.java }}
+              distribution: ${{ runner.os == 'macOS' && matrix.java == '8' && 'liberica' || 'temurin' }}
+              cache: "maven"
+
