@@ -15,7 +15,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4  # 检出代码
 
-      - name: Environment dependence
+      - if : runner.os == 'macOS'
+        name: Environment dependence
+        uses: ./.github/actions/dependence
+        with:
+          java: "11"
+
+      - if : runner.os != 'macOS'
+        name: Environment dependence
         uses: ./.github/actions/dependence
         with:
           java: "8"
