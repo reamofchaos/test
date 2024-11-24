@@ -43,9 +43,6 @@ runs:
                 sed -i"" -e "s/19530:19530/$port:19530/g" $port/docker-compose-$port.yml
                 sed -i"" -e "s/\/volumes/${{ github.workspace }}\/volumes$port/g" $port/docker-compose-$port.yml
                 sed -i"" -e "s/name: milvus/name: milvus$port/g" $port/docker-compose-$port.yml
-#                mkdir -p ${{ env.RUNNER_TEMP }}/volumes$port/minio
-#                chmod -R 777 ${{ env.RUNNER_TEMP }}/volumes$port/minio
-#                sed -i"" 's|${DOCKER_VOLUME_DIRECTORY:-.}|${{ github.workspace }}|g' $port/docker-compose-$port.yml
               done
               echo "docker-compose.yml created successfully"
 
