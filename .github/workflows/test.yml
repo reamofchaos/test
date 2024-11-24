@@ -67,11 +67,31 @@ jobs:
         with:
           java: "8"
 
+      - name: network test
+        shell: bash
+        run: |
+          for port in 19530 19531 19532; do
+            if ss -tuln | grep -q ":$port "; then
+              echo "Port $port is open."
+            else
+              echo "Port $port is not open."
+            fi
+          done
+
       - name: Run tests
         shell: bash
         run: |
           mvn clean package
 
+  teardown-db:
+    needs: run-tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Stop Postgres service
+        run: |
+          docker stop postgres
+          docker rm postgres
 
 
 #      - if: runner.os == 'Windows'
