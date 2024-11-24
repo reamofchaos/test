@@ -83,15 +83,6 @@ jobs:
         run: |
           mvn clean package
 
-  teardown-db:
-    needs: run-tests
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Stop Postgres service
-        run: |
-          docker stop postgres
-          docker rm postgres
 
 
 #      - if: runner.os == 'Windows'
