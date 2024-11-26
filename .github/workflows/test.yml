@@ -41,7 +41,7 @@ jobs:
         shell: bash
         run: |
           echo "netstat -an"
-          netstat -an|grep 1953
+          netstat -an | grep "1953"
           docker ps -a
 
       - name: Set output
