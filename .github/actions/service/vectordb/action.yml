@@ -53,7 +53,7 @@ runs:
           run: |
               for port in ${{ inputs.ports }}; do
                 sudo chown -R $(whoami) $port/
-                docker-compose -f $port/docker-compose-$port.yml up -d
+                sudo nohup docker-compose -f $port/docker-compose-$port.yml up -d
               done
               sleep 5
               for port in ${{ inputs.ports }}; do
@@ -70,6 +70,13 @@ runs:
           working-directory: ${{ github.workspace }}
           run: |
             docker ps
+            for port in 19530 19531 19532; do
+              if netstat -an | grep -q ".*:$port.*LISTEN"; then
+                echo "Port $port is open."
+              else
+                echo "Port $port is not open."
+              fi
+            done
             docker logs milvus19530-standalone
             docker logs milvus19530-minio
             docker logs milvus19530-etcd
