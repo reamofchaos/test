@@ -114,6 +114,15 @@ runs:
             docker ps
             bash 19530/standalone_embed.sh start
             docker ps -a
+            
+            echo "netstat -an"
+            netstat -an
+            
+            echo "lsof -i"
+            lsof -i :19530
+            
+            echo "nc -zv"
+            nc -zv 127.0.0.1 19530
 
 #        - if: fromJSON(inputs.start) && runner.os == 'Windows'
 #          name: Start milvus on Windows
