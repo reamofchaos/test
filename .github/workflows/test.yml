@@ -72,10 +72,11 @@ jobs:
         run: |
           docker ps
           echo "netstat -an"
-          netstat -an | grep 8181
-          netstat -an | grep 1953
+#          netstat -an | grep 8181
+#          netstat -an | grep 1953
           lsof -i :8181
           lsof -i :1953
+          netstat -an
           docker ps -a
 
       - name: Set output
