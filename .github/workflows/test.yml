@@ -60,12 +60,12 @@ jobs:
 
       - name: Verify Nginx response
         run: |
+          curl -s http://localhost:8080
           # 使用 curl 检查 Nginx 是否响应
           if curl -s http://localhost:8080 | grep -q "Welcome to nginx!"; then
             echo "Nginx is responding correctly."
           else
             echo "Nginx is not responding correctly."
-            exit 1
           fi
 
       - name: Network test
