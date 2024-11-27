@@ -43,7 +43,7 @@ jobs:
           docker pull nginx:latest
           
           # 运行 Nginx 容器
-          docker run -d -p 8080:80 --name my-nginx nginx:latest
+          docker run -d -p 8181:80 --name my-nginx nginx:latest
 
       - name: Check Nginx is running
         run: |
@@ -60,9 +60,8 @@ jobs:
 
       - name: Verify Nginx response
         run: |
-          curl -s http://localhost:8080
           # 使用 curl 检查 Nginx 是否响应
-          if curl -s http://localhost:8080 | grep -q "Welcome to nginx!"; then
+          if curl -s http://localhost:8181 | grep -q "Welcome to nginx!"; then
             echo "Nginx is responding correctly."
           else
             echo "Nginx is not responding correctly."
@@ -73,7 +72,7 @@ jobs:
         run: |
           echo "netstat -an"
           netstat -an | grep "1953"
-          netstat -an | grep "8080"
+          netstat -an | grep "8181"
           docker ps -a
 
       - name: Set output
