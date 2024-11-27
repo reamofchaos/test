@@ -37,11 +37,43 @@ jobs:
         with:
           DB-name: "VectorDB"
 
+      - name: Run Nginx in Docker
+        run: |
+          # 拉取官方 Nginx 镜像
+          docker pull nginx:latest
+          
+          # 运行 Nginx 容器
+          docker run -d -p 8080:80 --name my-nginx nginx:latest
+
+      - name: Check Nginx is running
+        run: |
+          # 等待几秒钟以确保 Nginx 完全启动
+          sleep 5
+          
+          # 检查 Nginx 是否正在运行
+          if docker ps | grep -q "my-nginx"; then
+            echo "Nginx is running."
+          else
+            echo "Nginx is not running."
+            exit 1
+          fi
+
+      - name: Verify Nginx response
+        run: |
+          # 使用 curl 检查 Nginx 是否响应
+          if curl -s http://localhost:8080 | grep -q "Welcome to nginx!"; then
+            echo "Nginx is responding correctly."
+          else
+            echo "Nginx is not responding correctly."
+            exit 1
+          fi
+
       - name: Network test
         shell: bash
         run: |
           echo "netstat -an"
           netstat -an | grep "1953"
+          netstat -an | grep "8080"
           docker ps -a
 
       - name: Set output
