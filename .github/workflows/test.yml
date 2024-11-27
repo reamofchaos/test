@@ -76,7 +76,9 @@ jobs:
 #          netstat -an | grep 1953
           lsof -i :8181
           lsof -i :1953
-          netstat -an
+          
+          sudo netstat -an
+          sudo netstat -an | grep 8181
           docker ps -a
 
       - name: Set output
