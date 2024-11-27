@@ -66,8 +66,8 @@ jobs:
         run: |
           docker ps
           
-          sudo lsof -t -i:8181
-          sudo lsof -t -i:1953
+          lsof -i:8181 || echo "No process using port 8181"  
+          lsof -i:1953 || echo "No process using port 1953"  
           
           docker ps -a
 
