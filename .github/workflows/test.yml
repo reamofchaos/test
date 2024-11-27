@@ -65,12 +65,10 @@ jobs:
         shell: bash
         run: |
           docker ps
-          echo "netstat -an"
-          lsof -i :8181
-          lsof -i :1953
           
-          sudo netstat -an
-          sudo netstat -an | grep 8181
+          sudo lsof -t -i:8181
+          sudo lsof -t -i:1953
+          
           docker ps -a
 
       - name: Set output
