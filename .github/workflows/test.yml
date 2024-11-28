@@ -86,11 +86,11 @@ jobs:
       - name: Generate output
         shell: bash
         run: |
-          echo "host=$(hostname -I | awk '{print $1}')" > host.txt
+          echo "$(hostname -I | awk '{print $1}')" > host.txt
           cat host.txt
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: hostfile
           path: host.txt
@@ -105,7 +105,7 @@ jobs:
           count=0  
           while [ $count -lt $retries ]; do  
             echo "Attempt $((count + 1)) to download the artifact..."  
-            if actions/download-artifact@v3 --name completefile; then  
+            if actions/download-artifact@v4 --name completefile; then  
               echo "Download succeeded."  
               break  
             else  
@@ -169,7 +169,7 @@ jobs:
           count=0  
           while [ $count -lt $retries ]; do  
             echo "Attempt $((count + 1)) to download the artifact..."  
-            if actions/download-artifact@v3 --name hostfile; then  
+            if actions/download-artifact@v4 --name hostfile; then  
               echo "Download succeeded."  
               break  
             else  
@@ -206,7 +206,7 @@ jobs:
         run: echo "complete" > complete.txt
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: completefile
           path: complete.txt
