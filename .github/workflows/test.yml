@@ -66,8 +66,14 @@ jobs:
         shell: bash
         run: |
           docker ps
-          
-          lsof -i:8181 || echo "No process using port 8181"  
+               
+          for port in 8181; do
+            if netstat -an | grep -q ".*:$port.*LISTEN"; then
+              echo "Port $port is open."
+            else
+              echo "Port $port is not open."
+            fi
+          done
           
           docker ps -a
 
@@ -79,7 +85,9 @@ jobs:
 
       - name: Generate output
         shell: bash
-        run: echo "host=$(hostname -I | awk '{print $1}')" > host.txt
+        run: |
+          echo "host=$(hostname -I | awk '{print $1}')" > host.txt
+
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
@@ -92,6 +100,7 @@ jobs:
         id: download
         shell: bash
         run: |
+          cat host.txt
           retries=60  # 最大重试次数  
           count=0  
           while [ $count -lt $retries ]; do  
