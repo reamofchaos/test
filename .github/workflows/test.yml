@@ -87,6 +87,30 @@ jobs:
           name: host
           path: host.txt
 
+
+      - name: Download the text file with retry
+        id: download
+        shell: bash
+        run: |
+          retries=60  # 最大重试次数  
+          count=0  
+          while [ $count -lt $retries ]; do  
+            echo "Attempt $((count + 1)) to download the artifact..."  
+            if actions/download-artifact@v3 --name complete; then  
+              echo "Download succeeded."  
+              break  
+            else  
+              count=$((count + 1))  
+              echo "Download failed. Waiting 10 seconds before retrying..."  
+              sleep 10  
+            fi  
+          done  
+          if [ $count -eq $retries ]; then  
+            echo "Failed to download the artifact after $retries attempts."  
+            exit 1  
+          fi
+
+
   #      - name: network test
 #        shell: bash
 #        run: |
@@ -128,10 +152,28 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Download build artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: host
+      - name: Download the text file with retry
+        id: download
+        shell: bash
+        run: |
+          retries=5  # 最大重试次数  
+          count=0  
+          while [ $count -lt $retries ]; do  
+            echo "Attempt $((count + 1)) to download the artifact..."  
+            if actions/download-artifact@v3 --name host; then  
+              echo "Download succeeded."  
+              break  
+            else  
+              count=$((count + 1))  
+              echo "Download failed. Waiting 10 seconds before retrying..."  
+              sleep 10  
+            fi  
+          done  
+          if [ $count -eq $retries ]; then  
+            echo "Failed to download the artifact after $retries attempts."  
+            exit 1  
+          fi
+
 
       - name: Read the content of the text file
         shell: bash
@@ -149,6 +191,16 @@ jobs:
             echo "Nginx is not responding correctly."
           fi
           curl -s http://$FILE_CONTENT:8181
+
+      - name: Generate output
+        shell: bash
+        run: echo "complete" > complete.txt
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: complete
+          path: complete.txt
 
 #      - name: replace host
 #        shell: bash
