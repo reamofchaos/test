@@ -170,7 +170,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: hostfile
-          path: host.txt
+#          path: host.txt
 
 #      - name: Download the text file with retry
 #        id: download
