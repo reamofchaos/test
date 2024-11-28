@@ -161,27 +161,38 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Download the text file with retry
-        id: download
+      - name: wait
         shell: bash
         run: |
-          retries=50  # 最大重试次数  
-          count=0  
-          while [ $count -lt $retries ]; do  
-            echo "Attempt $((count + 1)) to download the artifact..."  
-            if actions/download-artifact@v4 --name hostfile; then  
-              echo "Download succeeded."  
-              break  
-            else  
-              count=$((count + 1))  
-              echo "Download failed. Waiting 10 seconds before retrying..."  
-              sleep 10  
-            fi  
-          done  
-          if [ $count -eq $retries ]; then  
-            echo "Failed to download the artifact after $retries attempts."  
-            exit 1  
-          fi
+          sleep 100
+
+      - name: Download file
+        uses: actions/download-artifact@v4
+        with:
+          name: hostfile
+          path: host.txt
+
+#      - name: Download the text file with retry
+#        id: download
+#        shell: bash
+#        run: |
+#          retries=50  # 最大重试次数
+#          count=0
+#          while [ $count -lt $retries ]; do
+#            echo "Attempt $((count + 1)) to download the artifact..."
+#            if actions/download-artifact@v4 --name hostfile; then
+#              echo "Download succeeded."
+#              break
+#            else
+#              count=$((count + 1))
+#              echo "Download failed. Waiting 10 seconds before retrying..."
+#              sleep 10
+#            fi
+#          done
+#          if [ $count -eq $retries ]; then
+#            echo "Failed to download the artifact after $retries attempts."
+#            exit 1
+#          fi
 
 
       - name: Read the content of the text file
