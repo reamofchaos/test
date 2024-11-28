@@ -165,7 +165,7 @@ jobs:
         id: download
         shell: bash
         run: |
-          retries=5  # 最大重试次数  
+          retries=50  # 最大重试次数  
           count=0  
           while [ $count -lt $retries ]; do  
             echo "Attempt $((count + 1)) to download the artifact..."  
