@@ -41,15 +41,17 @@ jobs:
         run: |
           pwd
 
+#          /d/a/test/test
+
+
       - uses: vedantmgoyal9/setup-wsl2@main
       - run: apt update && apt upgrade -y
         shell: wsl-run {0}
 
-      - run: |
-          pwd
-          ls -al
-          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-        shell: wsl-run {0}
+      - name: Run DB
+        uses: ./.github/actions/dbRunner
+        with:
+          DB-name: "VectorDB"
 
 
       - name: Network test
