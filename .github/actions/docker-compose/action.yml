@@ -59,11 +59,11 @@ runs:
           name: Install Docker Compose
           shell: wsl-run {0}
           run: |
-            sudo apt install apt-transport-https ca-certificates curl software-properties-common
+            sudo apt install apt-transport-https ca-certificates curl software-properties-common -y
             curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
             sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
             sudo apt update
-            sudo apt install docker-ce docker-ce-cli containerd.io
+            sudo apt install docker-ce docker-ce-cli containerd.io -y
             docker --version
             DOCKER_COMPOSE_VERSION=v2.30.1
             sudo curl -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
