@@ -20,54 +20,43 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4  # 检出代码
 
-#      - if : runner.os == 'macOS'
-#        name: Environment dependence
-#        uses: ./.github/actions/dependence
-#        with:
-#          java: "11"
-#
-#      - if : runner.os != 'macOS'
-#        name: Environment dependence
-#        uses: ./.github/actions/dependence
-#        with:
-#          java: "8"
-#
+      - if : runner.os == 'macOS'
+        name: Environment dependence
+        uses: ./.github/actions/dependence
+        with:
+          java: "11"
+
+      - if : runner.os != 'macOS'
+        name: Environment dependence
+        uses: ./.github/actions/dependence
+        with:
+          java: "8"
+
 #      - name: Run DB
 #        uses: ./.github/actions/dbRunner
 #        with:
 #          DB-name: "VectorDB"
-
-      - name: Run Nginx in Docker
+      - name: pwd
+        shell: bash
         run: |
-          docker pull nginx:latest
-          
-          docker run -d -p 8181:80 --name my-nginx nginx:latest
+          pwd
 
-      - name: Check Nginx is running
-        run: |
-          sleep 5
-          
-          if docker ps | grep -q "my-nginx"; then
-            echo "Nginx is running."
-          else
-            echo "Nginx is not running."
-            exit 1
-          fi
+      - uses: vedantmgoyal9/setup-wsl2@main
+      - run: apt update && apt upgrade -y
+        shell: wsl-run {0}
 
-      - name: Verify Nginx response
-        run: |
-          if curl -s http://localhost:8181 | grep -q "Welcome to nginx!"; then
-            echo "Nginx is responding correctly."
-          else
-            echo "Nginx is not responding correctly."
-          fi
+      - run: |
+          ls -al
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+        shell: wsl-run {0}
+
 
       - name: Network test
         shell: bash
         run: |
           docker ps
                
-          for port in 8181; do
+          for port in 19530 19531 19532; do
             if netstat -an | grep -q ".*:$port.*LISTEN"; then
               echo "Port $port is open."
             else
@@ -76,225 +65,4 @@ jobs:
           done
           
           docker ps -a
-
-      - name: Set output
-        id: db_info
-        shell: bash
-        run: |
-          echo "host=$(hostname -I | awk '{print $1}')" >> $GITHUB_OUTPUT
-
-      - name: Generate output
-        shell: bash
-        run: |
-          echo "$(hostname -I | awk '{print $1}')" > host.txt
-          cat host.txt
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: hostfile
-          path: host.txt
-
-
-      - name: Download the text file with retry
-        id: download
-        shell: bash
-        run: |
-          cat host.txt
-          retries=60  # 最大重试次数  
-          count=0  
-          while [ $count -lt $retries ]; do  
-            echo "Attempt $((count + 1)) to download the artifact..."  
-            if actions/download-artifact@v4 --name completefile; then  
-              echo "Download succeeded."  
-              break  
-            else  
-              count=$((count + 1))  
-              echo "Download failed. Waiting 10 seconds before retrying..."  
-              sleep 10  
-            fi  
-          done  
-          if [ $count -eq $retries ]; then  
-            echo "Failed to download the artifact after $retries attempts."  
-            exit 1  
-          fi
-
-
-  #      - name: network test
-#        shell: bash
-#        run: |
-#          for port in 19530 19531 19532; do
-#            if netstat -an | grep -q ".*:$port.*LISTEN"; then
-#              echo "Port $port is open."
-#            else
-#              echo "Port $port is not open."
-#            fi
-#          done
-
-#      - name: Run tests
-#        shell: bash
-#        run: |
-#          mvn clean package
-
-#  job2:
-#    runs-on: windows-latest
-#    env:
-#      host: ${{ needs.Run_Milvus.outputs.host }}
-#
-#    steps:
-#      - name: Checkout code
-#        uses: actions/checkout@v2
-#
-#      - name: Access the service
-#        run: |
-#          Invoke-WebRequest -Uri http://${{ env.host }}:8080
-#          Write-Host "Service is accessible from job2!"
-
-  Java-Test:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
-
-    runs-on: ${{ matrix.os }}
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: wait
-        shell: bash
-        run: |
-          sleep 30
-
-      - name: Download file
-        uses: actions/download-artifact@v4
-        with:
-          name: hostfile
-#          path: host.txt
-
-#      - name: Download the text file with retry
-#        id: download
-#        shell: bash
-#        run: |
-#          retries=50  # 最大重试次数
-#          count=0
-#          while [ $count -lt $retries ]; do
-#            echo "Attempt $((count + 1)) to download the artifact..."
-#            if actions/download-artifact@v4 --name hostfile; then
-#              echo "Download succeeded."
-#              break
-#            else
-#              count=$((count + 1))
-#              echo "Download failed. Waiting 10 seconds before retrying..."
-#              sleep 10
-#            fi
-#          done
-#          if [ $count -eq $retries ]; then
-#            echo "Failed to download the artifact after $retries attempts."
-#            exit 1
-#          fi
-
-
-      - name: Read the content of the text file
-        shell: bash
-        run: |
-          cat host.txt
-          content=$(cat host.txt)  
-          echo "FILE_CONTENT=$content" >> $GITHUB_ENV
-
-      - name: Use the variable in the next step
-        run: |
-          echo "The content of the file is: $FILE_CONTENT"  
-          if curl -s http://$FILE_CONTENT:8181 | grep -q "Welcome to nginx!"; then
-            echo "Nginx is responding correctly."
-          else
-            echo "Nginx is not responding correctly."
-          fi
-          curl -s http://$FILE_CONTENT:8181
-
-      - name: Generate output
-        shell: bash
-        run: echo "complete" > complete.txt
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: completefile
-          path: complete.txt
-
-#      - name: replace host
-#        shell: bash
-#        run: |
-#          sed -i"" -e "s/127.0.0.1/${{ env.host }}/g" src/main/java/org/example/MilvusTest.java
-#          sed -i"" -e "s/127.0.0.1/${{ env.host }}/g" src/main/java/org/example/MilvusTest1.java
-#          sed -i"" -e "s/127.0.0.1/${{ env.host }}/g" src/main/java/org/example/MilvusTest2.java
-
-
-
-
-#      - if : runner.os == 'macOS'
-#        name: Environment dependence
-#        uses: ./.github/actions/dependence
-#        with:
-#          java: "11"
-#
-#      - if : runner.os != 'macOS'
-#        name: Environment dependence
-#        uses: ./.github/actions/dependence
-#        with:
-#          java: "8"
-#
-#      - name: network test
-#        shell: bash
-#        run: |
-#          for port in 19530 19531 19532; do
-#            if ss -tuln | grep -q ":$port "; then
-#              echo "Port $port is open."
-#            else
-#              echo "Port $port is not open."
-#            fi
-#          done
-#
-#      - name: Run tests
-#        shell: bash
-#        run: |
-#          mvn clean package
-
-
-
-#      - if: runner.os == 'Windows'
-#        name: Verify Docker installation on Windows
-#        shell: pwsh
-#        run: |
-#          $env:Path += ";${{ github.workspace }}"
-#          docker --version
-#          docker-compose --version
-#
-#      - if: runner.os != 'Windows'
-#        name: Verify Docker installation
-#        shell: bash
-#        run: |
-#          docker --version
-#          docker-compose --version
-#
-#      - name: Run Milvus DB
-#        uses: ./.github/workflows/actions/service/milvus
-#        with:
-#          stop: false
-#          clean: false
-#          start: true
-#          ports: 19530 19531 19532
-#
-#
-#      - name: Run tests
-#        shell: bash
-#        run: |
-#          docker ps -a
-#          if ss -tuln | grep -q ":19530 "; then
-#            echo "Port 19530 is open."
-#          else
-#            echo "Port 19530 is not open."
-#          fi
-#          mvn test  # 运行测试
 
