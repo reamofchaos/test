@@ -51,7 +51,11 @@ runs:
           shell: wsl-run {0}
           working-directory: ${{ github.workspace }}
           run: |
-            cd /mnt/d/test/test
+            ls /mnt
+            ls /mnt/d
+            ls /mnt/d/a
+            cd /mnt/d/a/test/test
+            ls
             for port in ${{ inputs.ports }}; do
               sudo chown -R $(whoami) $port/
               sudo nohup docker-compose -f $port/docker-compose-$port.yml up -d
