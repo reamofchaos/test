@@ -46,6 +46,7 @@ jobs:
         shell: wsl-run {0}
 
       - run: |
+          pwd
           ls -al
           curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
         shell: wsl-run {0}
