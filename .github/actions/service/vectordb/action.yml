@@ -51,11 +51,6 @@ runs:
           shell: wsl-run {0}
           working-directory: ${{ github.workspace }}
           run: |
-            ls /mnt
-            ls /mnt/d
-            ls /mnt/d/a
-            cd /mnt/d/a/test/test
-            ls
             for port in ${{ inputs.ports }}; do
               sudo chown -R $(whoami) $port/
               sudo nohup docker-compose -f $port/docker-compose-$port.yml up -d
@@ -69,6 +64,9 @@ runs:
               fi
             done
             docker ps -a
+            docker logs milvus19530-standalone
+            docker logs milvus19530-minio
+            docker logs milvus19530-etcd
             
         - if: fromJSON(inputs.start) && runner.os != 'Windows'
           name: Start milvus
@@ -89,7 +87,8 @@ runs:
             done
             docker ps -a
 
-        - name: show logs
+        - if: fromJSON(inputs.start) && runner.os != 'Windows'
+          name: show logs
           shell: bash
           working-directory: ${{ github.workspace }}
           run: |
@@ -104,6 +103,19 @@ runs:
             docker logs milvus19530-standalone
             docker logs milvus19530-minio
             docker logs milvus19530-etcd
+            
+        - if: fromJSON(inputs.start) && runner.os == 'Windows'
+          name: show logs
+          shell: bash
+          working-directory: ${{ github.workspace }}
+          run: |
+            for port in 19530 19531 19532; do
+              if netstat -an | grep -q ".*:$port.*LISTEN"; then
+                echo "Port $port is open."
+              else
+                echo "Port $port is not open."
+              fi
+            done
 
 #        - if: fromJSON(inputs.start) && runner.os == 'Windows'
 #          name: Start milvus
