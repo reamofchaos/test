@@ -86,10 +86,11 @@ jobs:
 
       - if : runner.os == 'macOS'
         name: replace host
+        shell: bash
         run: |
-          sed -i"" -e "s/127.0.0.1/${{ docker.for.mac.localhost }}/g" src/main/java/org/example/MilvusTest.java
-          sed -i"" -e "s/127.0.0.1/${{ docker.for.mac.localhost }}/g" src/main/java/org/example/MilvusTest1.java
-          sed -i"" -e "s/127.0.0.1/${{ docker.for.mac.localhost }}/g" src/main/java/org/example/MilvusTest2.java
+          sed -i"" -e "s/127.0.0.1/docker.for.mac.localhost/g" src/main/java/org/example/MilvusTest.java
+          sed -i"" -e "s/127.0.0.1/docker.for.mac.localhost/g" src/main/java/org/example/MilvusTest1.java
+          sed -i"" -e "s/127.0.0.1/docker.for.mac.localhost/g" src/main/java/org/example/MilvusTest2.java
 
       - name: Run tests
         shell: bash
