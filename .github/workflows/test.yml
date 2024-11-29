@@ -95,6 +95,7 @@ jobs:
           sed -i"" -e "s/127.0.0.1/gateway.docker.internal/g" src/main/java/org/example/MilvusTest1.java
           sed -i"" -e "s/127.0.0.1/gateway.docker.internal/g" src/main/java/org/example/MilvusTest2.java
           ifconfig
+          cat /est/hosts
 
       - name: Run tests
         shell: bash
