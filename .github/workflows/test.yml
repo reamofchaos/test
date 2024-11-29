@@ -91,9 +91,9 @@ jobs:
           docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' milvus19530-standalone
           MILVUS_HOST=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' milvus19530-standalone)
           echo "MILVUS_HOST=${MILVUS_HOST}"
-          sed -i"" -e "s/127.0.0.1/${MILVUS_HOST}/g" src/main/java/org/example/MilvusTest.java
-          sed -i"" -e "s/127.0.0.1/${MILVUS_HOST}/g" src/main/java/org/example/MilvusTest1.java
-          sed -i"" -e "s/127.0.0.1/${MILVUS_HOST}/g" src/main/java/org/example/MilvusTest2.java
+          sed -i"" -e "s/127.0.0.1/host.docker.internal/g" src/main/java/org/example/MilvusTest.java
+          sed -i"" -e "s/127.0.0.1/host.docker.internal/g" src/main/java/org/example/MilvusTest1.java
+          sed -i"" -e "s/127.0.0.1/host.docker.internal/g" src/main/java/org/example/MilvusTest2.java
 
       - name: Run tests
         shell: bash
