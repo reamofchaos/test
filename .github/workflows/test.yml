@@ -54,7 +54,8 @@ jobs:
           DB-name: "VectorDB"
 
 
-      - name: Network test
+      - if : runner.os != 'Windows'
+        name: Network test
         shell: bash
         run: |
           docker ps
@@ -69,3 +70,20 @@ jobs:
           
           docker ps -a
 
+      - if : runner.os == 'Windows'
+        name: Network test on Windows
+        shell: bash
+        run: |
+          for port in 19530 19531 19532; do
+            if netstat -an | grep -q ".*:$port.*LISTEN"; then
+              echo "Port $port is open."
+            else
+              echo "Port $port is not open."
+            fi
+          done
+
+      - name: Run tests
+        shell: bash
+        run: |
+          mvn clean package
+      
