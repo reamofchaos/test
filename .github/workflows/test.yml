@@ -10,7 +10,7 @@ jobs:
       fail-fast: false
       matrix:
 #        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
-        os: ["windows-latest"]
+        os: ["windows-latest", "macos-latest"]
     runs-on: ${{ matrix.os }}
 
     outputs:
@@ -43,9 +43,11 @@ jobs:
 
 #          /d/a/test/test
 
+      - if : runner.os == 'Windows'
+        uses: vedantmgoyal9/setup-wsl2@main
 
-      - uses: vedantmgoyal9/setup-wsl2@main
-      - run: apt update && apt upgrade -y
+      - if : runner.os == 'Windows'
+        run: apt update && apt upgrade -y
         shell: wsl-run {0}
 
       - name: Run DB
@@ -82,8 +84,14 @@ jobs:
             fi
           done
 
+      - if : runner.os == 'macOS'
+        name: replace host
+        run: |
+          sed -i"" -e "s/127.0.0.1/${{ docker.for.mac.localhost }}/g" src/main/java/org/example/MilvusTest.java
+          sed -i"" -e "s/127.0.0.1/${{ docker.for.mac.localhost }}/g" src/main/java/org/example/MilvusTest1.java
+          sed -i"" -e "s/127.0.0.1/${{ docker.for.mac.localhost }}/g" src/main/java/org/example/MilvusTest2.java
+
       - name: Run tests
         shell: bash
         run: |
           mvn clean package
-      
