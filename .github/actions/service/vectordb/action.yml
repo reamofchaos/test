@@ -117,70 +117,9 @@ runs:
               fi
             done
 
-#        - if: fromJSON(inputs.start) && runner.os == 'Windows'
-#          name: Start milvus
-#          shell: bash
-#          working-directory: ${{ github.workspace }}
-#          run: |
-#            docker ps
-#            docker-compose -v
-#            for port in ${{ inputs.ports }}; do
-#              sudo chown -R $(whoami) $port/
-#              docker-compose -f $port/docker-compose-$port.yml up -d
-#            done
-#            sleep 5
-#            for port in ${{ inputs.ports }}; do
-#              if ss -tuln | grep -q ":$port "; then
-#                echo "Port $port is open."
-#              else
-#                echo "Port $port is not open."
-#              fi
-#            done
-#            docker ps -a
-
-#        - if: fromJSON(inputs.start) && runner.os == 'Windows'
-#          name: Start milvus on Windows
-#          shell: bash
-#          working-directory: ${{ github.workspace }}
-#          run: |
-#            pwd
-#            echo ${{ github.workspace }}
-#            cp -f docker/milvus/standalone_embed.sh 19530/standalone_embed.sh
-#
-#            docker ps
-#            bash 19530/standalone_embed.sh start
-#            docker ps -a
-#
-#            echo "netstat -an"
-#            netstat -an
-#
-#            echo "lsof -i"
-#            lsof -i :19530
-#
-#            echo "nc -zv"
-#            nc -zv 127.0.0.1 19530
-
-#        - if: fromJSON(inputs.start) && runner.os == 'Windows'
-#          name: Start milvus on Windows
-#          shell: pwsh
-#          working-directory: ${{ github.workspace }}
-#          run: |
-#            $env:Path += ";${{ github.workspace }}"
-#            $ports = "${{ inputs.ports }}" -split ' '
-#
-#            docker-compose -v
-#            docker ps
-#
-#            foreach ($port in $ports){
-#              docker-compose -f "$port/docker-compose-$port.yml" up -d
-#            }
-#
-#            Start-Sleep -Seconds 5
-#
-#            foreach ($port in $ports){
-#              if (Get-NetTCPConnection -State Listen | Where-Object { $_.LocalPort -eq $port }) {
-#                Write-Host "Port $port is open."
-#              } else {
-#                Write-Host "Port $port is not open."
-#              }
-#            }
+        - if: fromJSON(inputs.start) && runner.os == 'macOS'
+          shell: bash
+          run: |
+            docker ps
+            docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' milvus19530-standalone
+            echo "==========================="
