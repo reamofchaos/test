@@ -91,7 +91,8 @@ jobs:
           docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' milvus19530-standalone
           ifconfig en0 | grep "inet " | awk '{print $2}'
           echo "=========="
-          colima status | grep 'address:'|sed 's/.*address: //'
+          ls
+          cat colima.txt | grep 'address:'|sed 's/.*address: //'
           MILVUS_HOST=$(colima status | grep 'address:'|sed 's/.*address: //')
           echo "MILVUS_HOST=${MILVUS_HOST}"
           sed -i"" -e "s/127.0.0.1/${MILVUS_HOST}/g" src/main/java/org/example/MilvusTest.java
