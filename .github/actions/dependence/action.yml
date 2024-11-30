@@ -38,7 +38,6 @@ runs:
         - if: runner.os == 'macOS' &&  inputs.docker-required=='true'
           name: Install Docker on MacOS
           shell: bash
-          workdir: ${{ github.workspace }}
           run: |
               brew update
               brew install docker qemu
