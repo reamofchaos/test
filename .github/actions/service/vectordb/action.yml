@@ -123,3 +123,7 @@ runs:
             docker ps
             docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' milvus19530-standalone
             echo "==========================="
+            colima status
+            echo "==========================="
+            docker network inspect bridge
+            echo "==========================="
