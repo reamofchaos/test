@@ -47,11 +47,10 @@ runs:
               colima start --network-address --arch arm64 --vm-type=qemu
 #              colima start --network-address --arch arm64 --vm-type=qemu
 #              docker --version
-              colima status -gt colima.txt
+              colima status > colima.txt
               ls
-              cat colima.txt | grep 'address:'|sed 's/.*address: //'
-#              cat colima.txt | grep 'address:'|sed 's/.*address: //'
-              
+              cat colima.txt | grep "address:"|awk '{print $4}'|tr -d '"'
+
 
         - name: Set up JDK ${{ inputs.java }}
           uses: actions/setup-java@v4
