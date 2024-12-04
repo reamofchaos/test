@@ -36,6 +36,7 @@ runs:
           working-directory: ${{ github.workspace }}
           run: |
               pwd
+              whoami
               echo ${{ github.workspace }}
               for port in ${{ inputs.ports }}; do
                 mkdir -p $port
@@ -64,9 +65,9 @@ runs:
               fi
             done
             docker ps -a
-            docker logs milvus19530-standalone
-            docker logs milvus19530-minio
-            docker logs milvus19530-etcd
+#            docker logs milvus19530-standalone
+#            docker logs milvus19530-minio
+#            docker logs milvus19530-etcd
             
         - if: fromJSON(inputs.start) && runner.os != 'Windows'
           name: Start milvus
