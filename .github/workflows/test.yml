@@ -83,7 +83,6 @@ jobs:
               echo "Port $port is not open."
             fi
           done
-
       - if : runner.os == 'macOS'
         name: replace host
         shell: bash
