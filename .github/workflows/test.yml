@@ -83,6 +83,7 @@ jobs:
               echo "Port $port is not open."
             fi
           done
+
       - if : runner.os == 'macOS'
         name: replace host
         shell: bash
@@ -90,7 +91,6 @@ jobs:
           docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' milvus19530-standalone
           ifconfig en0 | grep "inet " | awk '{print $2}'
           ls
-#          colima status | grep "address:" | awk '{print $4}' | tr -d '"'
           echo "========================"
           MILVUS_HOST=$(ifconfig en0 | grep "inet " | awk '{print $2}')
           MILVUS_HOST="192.168.106.2"
