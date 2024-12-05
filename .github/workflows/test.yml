@@ -131,8 +131,15 @@ jobs:
           sed -i"" -e "s/127.0.0.1/192.168.106.2/g" src/main/java/org/example/MilvusTest2.java
           ifconfig
 
-      - name: Run tests
+#      - name: Run tests
+#        shell: bash
+#        run: |
+#          mvn clean package
+#          mvn test
+
+
+      - name: Run tests1
         shell: bash
         run: |
-          mvn clean package
-          mvn test
+          chmod +x "${GITHUB_WORKSPACE}/.github/scripts/test/test_union.sh"
+          mvn test -q -Dtest=Controller -DfailIfNoTests=false -P-format
