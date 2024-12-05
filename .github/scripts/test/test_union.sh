@@ -1,5 +1,3 @@
 pwd
-
 echo "======"
-
 java -version
