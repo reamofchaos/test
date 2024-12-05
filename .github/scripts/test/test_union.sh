@@ -1,1 +1,4 @@
-pwdecho "======"java -version
+#!/bin/bash
+pwd
+java -version
+ls
