@@ -17,8 +17,10 @@ public class ShellRunner {
         try {
             ProcessBuilder builder = new ProcessBuilder();
             if (isOnWin()) {;
+                System.out.println("isOnWin");
                 builder.command((isCommandOnPath("bash") ? "bash" : BASH_PATH), command);
             } else {
+                System.out.println("not isOnWin");
                 builder.command(command);
             }
             builder.redirectErrorStream(true);
@@ -71,6 +73,7 @@ public class ShellRunner {
     }
 
     public static boolean isOnWin() {
+        System.out.println(System.getProperty("os.name"));
         return System.getProperty("os.name").toLowerCase().contains("win");
     }
 
