@@ -70,6 +70,7 @@ jobs:
           pwd
           java -version
           echo $JAVA_HOME
+          ipconfig
 
       - if: runner.os == 'Windows'
         name: wsl java version
@@ -78,6 +79,7 @@ jobs:
           pwd
           echo $JAVA_HOME
           java -version
+          ifconfig
 
       - name: Run DB
         uses: ./.github/actions/dbRunner
