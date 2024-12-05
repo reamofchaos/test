@@ -51,13 +51,15 @@ jobs:
         run: apt update && apt upgrade -y
         shell: wsl-run {0}
 
-      - name: Set JAVA_HOME
+      - if : runner.os == 'Windows'
+        name: Set JAVA_HOME
+        shell: wsl-run {0}
         run: |
-          echo "JAVA_HOME=$(wsl echo \$(dirname \$(dirname \$(which java))))" >> $GITHUB_ENV  
-
-      - name: Verify JAVA_HOME
-        run: |
-          echo "JAVA_HOME is set to ${{ env.JAVA_HOME }}"  
+          sudo apt update
+          sudo apt install openjdk-8-jdk -y
+          echo "export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64" >> $HOME/.bashrc
+          echo "export PATH=\$PATH:\$JAVA_HOME/bin" >> $HOME/.bashrc
+          source $HOME/.bashrc
 
       - if: runner.os == 'Windows'
         name: java version
