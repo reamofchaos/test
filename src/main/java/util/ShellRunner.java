@@ -18,6 +18,7 @@ public class ShellRunner {
             ProcessBuilder builder = new ProcessBuilder();
             if (isOnWin()) {;
                 System.out.println("isOnWin");
+                System.out.println(isCommandOnPath("bash"));
                 builder.command((isCommandOnPath("bash") ? "bash" : BASH_PATH), command);
             } else {
                 System.out.println("not isOnWin");
