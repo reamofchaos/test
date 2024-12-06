@@ -41,7 +41,7 @@ runs:
           run: |
               brew update
               brew install docker
-              brew install colima lima
+              brew install colima
               colima start --network-address
               docker --version
               colima status
