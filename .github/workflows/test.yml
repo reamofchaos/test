@@ -20,6 +20,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4  # 检出代码
 
+      - name: show runner info
+        shell: bash
+        run: |
+          pwd
+          whoami
+
       - if : runner.os == 'macOS'
         name: Environment dependence
         uses: ./.github/actions/dependence

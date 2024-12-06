@@ -44,9 +44,10 @@ runs:
               brew install colima
               LIMACTL_PATH=$(brew --prefix)/bin/limactl
               sudo curl -L -o $LIMACTL_PATH https://github.com/mikekazakov/lima-nohvf/raw/master/limactl && sudo chmod +x $LIMACTL_PATH
-              colima start --network-address --arch arm64 --vm-type=qemu
+              colima start --network-address --vm-type=qemu
               docker --version
               colima status
+#              colima start --network-address --arch arm64 --vm-type=qemu
 #              colima status| grep "address:"|awk '{print $4}'|tr -d '"'
 
 
