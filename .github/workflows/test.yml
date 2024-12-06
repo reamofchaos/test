@@ -25,6 +25,8 @@ jobs:
         run: |
           pwd
           whoami
+          uname -m
+          uname -a
 
       - if : runner.os == 'macOS'
         name: Environment dependence
