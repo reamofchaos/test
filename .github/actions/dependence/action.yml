@@ -42,11 +42,11 @@ runs:
               brew update
               brew install docker
               brew install colima lima
-              LIMACTL_PATH=$(brew --prefix)/bin/limactl
-              sudo curl -L -o $LIMACTL_PATH https://github.com/mikekazakov/lima-nohvf/raw/master/limactl && sudo chmod +x $LIMACTL_PATH
               colima start --network-address --arch amd64 --vm-type=lima
               docker --version
               colima status
+#              LIMACTL_PATH=$(brew --prefix)/bin/limactl
+#              sudo curl -L -o $LIMACTL_PATH https://github.com/mikekazakov/lima-nohvf/raw/master/limactl && sudo chmod +x $LIMACTL_PATH
 #    colima start --network-address --arch arm64 --vm-type=qemu
 
         - name: Set up JDK ${{ inputs.java }}
