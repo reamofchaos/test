@@ -55,9 +55,6 @@ runs:
             brew update
             brew install docker qemu
             brew install colima lima
-#            LIMACTL_PATH=$(brew --prefix)/bin/limactl
-#            sudo curl -L -o $LIMACTL_PATH https://github.com/mikekazakov/lima-nohvf/raw/master/limactl && sudo chmod +x $LIMACTL_PATH
-
             n=0
             max_retries=3
             until [ "$n" -ge "$max_retries" ]
