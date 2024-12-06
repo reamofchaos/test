@@ -35,26 +35,32 @@ runs:
               echo "JAVA_OPTS=-Xmx4g -Xms2g" >> %GITHUB_ENV%
 
         # we use a patched version of lima(slower) because colima cannot start on M1 chips and the docker task is lightweight.
+#        - if: runner.os == 'macOS' &&  inputs.docker-required=='true'
+#          name: Install Docker on MacOS
+#          shell: bash
+#          run: |
+#              brew update
+#              brew install docker qemu
+#              brew install colima
+#              LIMACTL_PATH=$(brew --prefix)/bin/limactl
+#              sudo curl -L -o $LIMACTL_PATH https://github.com/mikekazakov/lima-nohvf/raw/master/limactl && sudo chmod +x $LIMACTL_PATH
+#              colima start --network-address --arch arm64 --vm-type=qemu
+#              docker --version
+#              colima status
+
+
         - if: runner.os == 'macOS' &&  inputs.docker-required=='true'
           name: Install Docker on MacOS
           shell: bash
           run: |
-              brew update
-              brew install docker
-              brew install colima lima
-              LIMACTL_PATH=$(brew --prefix)/bin/limactl
-              sudo curl -L -o $LIMACTL_PATH https://github.com/mikekazakov/lima-nohvf/raw/master/limactl && sudo chmod +x $LIMACTL_PATH
-              brew services start colima
-              dockerd > /dev/null 2>&1 &  
-              sleep 5 # 等待Docker启动  
-              docker --version
-              docker info
-#              colima status
-#              brew services start colima
-#              brew install docker qemu
-#              colima start --network-address --arch arm64 --vm-type=qemu
-#              colima status| grep "address:"|awk '{print $4}'|tr -d '"'
-
+            echo "Starting Docker daemon..."  
+            # 启动 Docker 守护进程  
+            open --background -a Docker
+            # 等待 Docker 启动  
+            sleep 10
+            docker --version
+            docker ps
+        
 
         - name: Set up JDK ${{ inputs.java }}
           uses: actions/setup-java@v4
