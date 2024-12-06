@@ -50,6 +50,7 @@ runs:
 
         - if: runner.os == 'macOS' &&  inputs.docker-required=='true'
           name: Setup docker (missing on macOS) - install QEMU 9.0.2
+          shell: bash
           run: |
             wget  https://raw.githubusercontent.com/Homebrew/homebrew-core/f1a9cf104a9a51779c7a532b658c490f69974839/Formula/q/qemu.rb
             brew install qemu.rb 2>&1
