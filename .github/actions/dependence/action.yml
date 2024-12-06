@@ -41,11 +41,12 @@ runs:
           run: |
               brew update
               brew install docker
-              brew install colima
+              brew install colima lima
               LIMACTL_PATH=$(brew --prefix)/bin/limactl
               sudo curl -L -o $LIMACTL_PATH https://github.com/mikekazakov/lima-nohvf/raw/master/limactl && sudo chmod +x $LIMACTL_PATH
               brew services start colima
               docker --version
+              docker info
 #              colima status
 #              brew install docker qemu
 #              colima start --network-address --arch arm64 --vm-type=qemu
