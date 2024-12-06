@@ -35,19 +35,50 @@ runs:
               echo "JAVA_OPTS=-Xmx4g -Xms2g" >> %GITHUB_ENV%
 
         # we use a patched version of lima(slower) because colima cannot start on M1 chips and the docker task is lightweight.
-        - if: runner.os == 'macOS' &&  inputs.docker-required=='true'
-          name: Install Docker on MacOS
-          shell: bash
-          run: |
-              brew update
-              brew install docker qemu
-              brew install colima lima
-              LIMACTL_PATH=$(brew --prefix)/bin/limactl
-              sudo curl -L -o $LIMACTL_PATH https://github.com/mikekazakov/lima-nohvf/raw/master/limactl && sudo chmod +x $LIMACTL_PATH
-              colima start --network-address
-              docker --version
-              docker ps
+#        - if: runner.os == 'macOS' &&  inputs.docker-required=='true'
+#          name: Install Docker on MacOS
+#          shell: bash
+#          run: |
+#              brew update
+#              brew install docker qemu
+#              brew install colima lima
+#              LIMACTL_PATH=$(brew --prefix)/bin/limactl
+#              sudo curl -L -o $LIMACTL_PATH https://github.com/mikekazakov/lima-nohvf/raw/master/limactl && sudo chmod +x $LIMACTL_PATH
+#              colima start --network-address --arch arm64 --vm-type=qemu
+#              docker --version
 #              colima status
+
+        - if: runner.os == 'macOS' &&  inputs.docker-required=='true'
+          name: Setup docker (missing on macOS) - install QEMU 9.0.2
+          run: |
+            wget  https://raw.githubusercontent.com/Homebrew/homebrew-core/f1a9cf104a9a51779c7a532b658c490f69974839/Formula/q/qemu.rb
+            brew install qemu.rb 2>&1
+            
+            brew install colima
+            brew install docker
+            n=0
+            max_retries=3
+            until [ "$n" -ge "$max_retries" ]
+            do
+              colima start || exit_code=$?
+              if [ "$exit_code" -eq 1 ]; then
+                echo "Command failed with exit code 1. Retrying... ($((n+1))/$max_retries)"
+                n=$((n+1))
+                sleep 5
+              else
+                exit $exit_code  # Exit on any code other than 1
+              fi
+            done
+            if [ "$n" -eq "$max_retries" ]; then
+              echo "Max retries reached. Failing the step."
+              exit 1
+            fi
+            DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}
+            mkdir -p $DOCKER_CONFIG/cli-plugins
+            curl -SL https://github.com/docker/buildx/releases/download/v0.14.1/buildx-v0.14.1.darwin-amd64 -o $DOCKER_CONFIG/cli-plugins/docker-buildx
+            chmod +x $DOCKER_CONFIG/cli-plugins/docker-buildx
+            
+            docker ps
 
         - name: Set up JDK ${{ inputs.java }}
           uses: actions/setup-java@v4
