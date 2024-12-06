@@ -49,7 +49,6 @@ jobs:
         run: |
           pwd
           ls
-          top -bn 1
           uname -m
 
 #          /d/a/test/test
