@@ -12,7 +12,6 @@ runs:
               docker --version
               brew install docker-compose
               docker-compose --version
-              brew services docker start
               docker ps
 
 #        - if: runner.os == 'Windows'
