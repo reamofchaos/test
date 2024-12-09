@@ -21,13 +21,10 @@ package cn.edu.tsinghua.iginx.vectordb.pool;
 
 import io.milvus.v2.client.MilvusClientV2;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 
 public class MilvusConnectPoolConfig {
-  private static final Logger LOGGER = LoggerFactory.getLogger(MilvusConnectPoolConfig.class);
   private MilvusConnectPool pool;
 
   private String username;
@@ -113,7 +110,7 @@ public class MilvusConnectPoolConfig {
         try {
           pool.addObject();
         } catch (Exception e) {
-          LOGGER.error("添加初始连接失败");
+          System.out.println("添加初始连接失败");
         }
       }
     }

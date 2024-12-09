@@ -25,12 +25,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.PooledObjectFactory;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 public class MilvusConnectPoolFactory implements PooledObjectFactory<MilvusClientV2> {
-  private static final Logger LOGGER = LoggerFactory.getLogger(MilvusConnectPoolFactory.class);
   private final String username;
   private final String password;
   private final String host;

@@ -10,7 +10,7 @@ jobs:
       fail-fast: false
       matrix:
 #        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
-        os: ["macos-latest"]
+        os: ["macos-13"]
     runs-on: ${{ matrix.os }}
 
     outputs:
@@ -132,7 +132,7 @@ jobs:
           ls
           echo "========================"
           MILVUS_HOST=$(ifconfig en0 | grep "inet " | awk '{print $2}')
-          MILVUS_HOST="192.168.106.2"
+          MILVUS_HOST="192.168.65.2"
           echo "MILVUS_HOST=${MILVUS_HOST}"
           sed -i"" -e "s/127.0.0.1/${MILVUS_HOST}/g" src/main/java/org/example/MilvusTest.java
           sed -i"" -e "s/127.0.0.1/${MILVUS_HOST}/g" src/main/java/org/example/MilvusTest1.java
