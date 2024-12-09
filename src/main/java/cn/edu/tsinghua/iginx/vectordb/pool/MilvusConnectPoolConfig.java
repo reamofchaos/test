@@ -68,6 +68,7 @@ public class MilvusConnectPoolConfig {
       int maxIdle,
       int minIdle,
       int maxTotal) {
+    System.out.println("MilvusConnectPoolConfig config init");
     this.username = username;
     this.password = password;
     this.host = host;
@@ -76,6 +77,7 @@ public class MilvusConnectPoolConfig {
     this.minIdle = minIdle;
     this.maxTotal = maxTotal;
     this.protocol = protocol;
+    LOGGER.info("MilvusConnectPoolConfig init: "+toString());
   }
 
   public MilvusConnectPool milvusConnectPool() {
@@ -124,5 +126,9 @@ public class MilvusConnectPoolConfig {
     if (pool != null) {
       pool.close();
     }
+  }
+
+  public String toString(){
+    return "host: "+host+" port: "+port+" protocol: "+protocol+" username: "+username+" password: "+password;
   }
 }

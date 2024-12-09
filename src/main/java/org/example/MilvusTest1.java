@@ -29,7 +29,7 @@ public class MilvusTest1 {
 
     MilvusClientV2 client = createClient();
 
-    MilvusConnectPoolConfig poolConfig = new MilvusConnectPoolConfig("127.0.0.1",19530,"grpc", null, null, 5, 2, 10);
+    MilvusConnectPoolConfig poolConfig = new MilvusConnectPoolConfig("127.0.0.1",19531,"grpc", null, null, 5, 2, 10);
 
     MilvusConnectPool milvusConnectPool;
 
@@ -39,7 +39,7 @@ public class MilvusTest1 {
     public MilvusClientV2 createClient() {
         MilvusClientV2 client = null;
         try {
-            System.out.println("poolConfig : "+poolConfig);
+            System.out.println("poolConfig : "+poolConfig.toString());
             milvusConnectPool = poolConfig.milvusConnectPool();
             System.out.println("milvusConnectPool: "+milvusConnectPool);
             client = milvusConnectPool.getMilvusClient();
