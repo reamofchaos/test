@@ -77,7 +77,7 @@ public class MilvusConnectPoolConfig {
     this.minIdle = minIdle;
     this.maxTotal = maxTotal;
     this.protocol = protocol;
-    LOGGER.info("MilvusConnectPoolConfig init: "+toString());
+    System.out.println("MilvusConnectPoolConfig init: "+toString());
   }
 
   public MilvusConnectPool milvusConnectPool() {
