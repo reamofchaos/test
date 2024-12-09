@@ -96,13 +96,15 @@ public class MilvusConnectPoolConfig {
     // 此处建议关闭jmx或是设置config.setJmxNameBase(), 因为默认注册的jmx会与项目可能已经存在的其他基于池类的实现bean冲突
     config.setJmxEnabled(false);
 
+    System.out.println("pool config init");
     // 创建连接工厂
     MilvusConnectPoolFactory factory =
         new MilvusConnectPoolFactory(host, port, protocol, username, password);
 
+    System.out.println("pool config init finish");
     // 初始化连接池
     pool = new MilvusConnectPool(factory, config);
-
+    System.out.println("pool init finish");
     // 以最小空闲数量为初始连接数, 添加初始连接
     if (minIdle > 0) {
       for (int i = 0; i < minIdle; i++) {
@@ -113,6 +115,7 @@ public class MilvusConnectPoolConfig {
         }
       }
     }
+    System.out.println("pool init finish1");
     return pool;
   }
 
