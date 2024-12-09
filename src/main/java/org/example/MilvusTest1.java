@@ -1,5 +1,6 @@
 package org.example;
 
+import cn.edu.tsinghua.iginx.vectordb.pool.MilvusConnectPool;
 import cn.edu.tsinghua.iginx.vectordb.pool.MilvusConnectPoolConfig;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -30,13 +31,18 @@ public class MilvusTest1 {
 
     MilvusConnectPoolConfig poolConfig = new MilvusConnectPoolConfig("127.0.0.1",19530,"grpc", null, null, 5, 2, 10);
 
+    MilvusConnectPool milvusConnectPool;
+
     public MilvusTest1() {
     }
 
     public MilvusClientV2 createClient() {
         MilvusClientV2 client = null;
         try {
-            client = poolConfig.milvusConnectPool().getMilvusClient();
+            System.out.println("poolConfig : "+poolConfig);
+            milvusConnectPool = poolConfig.milvusConnectPool();
+            System.out.println("milvusConnectPool: "+milvusConnectPool);
+            client = milvusConnectPool.getMilvusClient();
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -106,7 +112,7 @@ public class MilvusTest1 {
 
     public void close() {
         if(client!=null){
-            poolConfig.milvusConnectPool().releaseMilvusClient(client);
+            milvusConnectPool.releaseMilvusClient(client);
         }
     }
 
