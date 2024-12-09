@@ -37,7 +37,6 @@ public class MilvusTest1 {
     }
 
     public MilvusClientV2 createClient() {
-        MilvusClientV2 client = null;
         try {
             long l=System.currentTimeMillis();
             System.out.println("poolConfig : "+poolConfig.toString());
