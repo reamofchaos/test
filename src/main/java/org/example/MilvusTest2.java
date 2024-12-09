@@ -19,8 +19,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MilvusTest2 {
-    private String uri = "grpc://127.0.0.1:19532";
-//    private String uri = "grpc://172.22.167.254:19531";
+//    private String uri = "grpc://127.0.0.1:19532";
+    private String uri = "grpc://192.168.200.47:19532";
 
     String username = "";
     String password = "";
