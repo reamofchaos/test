@@ -32,6 +32,7 @@ public class TestEtcd {
             client.close();
         }
         System.out.println("run etcd ok!");
+
     }
 
 }

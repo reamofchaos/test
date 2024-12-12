@@ -68,8 +68,18 @@
             <artifactId>grpc-bom</artifactId>
             <version>1.57.2</version>
             <type>pom</type>
-            <scope>import</scope>
         </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-netty</artifactId>
+            <version>1.57.2</version>
+        </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-grpclb</artifactId>
+            <version>1.57.2</version>
+        </dependency>
+
     </dependencies>
     <build>
         <plugins>
