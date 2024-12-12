@@ -65,6 +65,17 @@ jobs:
         with:
           java: "8"
 
+      - name: net test
+        shell: bash
+        run: |
+          for port in 2379; do
+            if netstat -an | grep -q ".*:$port.*LISTEN"; then
+              echo "Port $port is open."
+            else
+              echo "Port $port is not open."
+            fi
+          done
+
 #      - name: Run DB
 #        uses: ./.github/actions/dbRunner
 #        with:
