@@ -101,9 +101,9 @@ runs:
                 echo "Port $port is not open."
               fi
             done
-            docker logs milvus19530-standalone
-            docker logs milvus19530-minio
-            docker logs milvus19530-etcd
+#            docker logs milvus19530-standalone
+#            docker logs milvus19530-minio
+#            docker logs milvus19530-etcd
             
         - if: fromJSON(inputs.start) && runner.os == 'Windows'
           name: show logs
