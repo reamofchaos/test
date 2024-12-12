@@ -5,93 +5,157 @@ on:
     branches: [ master ]  # 仅当 Pull Request 目标分支是 main 时触发
 
 jobs:
-  build-and-test:
-    runs-on: ubuntu-latest  # 使用最新的 Ubuntu 运行器
-#    runs-on: macos-latest  # 使用最新的 Ubuntu 运行器
-#    runs-on: windows-latest  # 使用最新的 Ubuntu 运行器
+  Run_Milvus:
+    strategy:
+      fail-fast: false
+      matrix:
+#        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
+        os: ["macos-latest"]
+    runs-on: ${{ matrix.os }}
+
+    outputs:
+      host: ${{ steps.db_info.outputs.host }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4  # 检出代码
 
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: '8'  # Specify the JDK version (e.g., 8, 11, 17)
-          cache: "maven"
-#          distribution: "temurin"
-          distribution: ${{ runner.os == 'macOS' && 'liberica' || 'temurin' }}
-
-      - if: runner.os == 'macOS'
-        name: Install Docker on MacOS
+      - name: show runner info
         shell: bash
         run: |
-          brew update
-          brew install qemu
-          brew install docker
-          brew install colima
-          LIMACTL_PATH=$(brew --prefix)/bin/limactl
-          sudo curl -L -o $LIMACTL_PATH https://github.com/mikekazakov/lima-nohvf/raw/master/limactl && sudo chmod +x $LIMACTL_PATH
-          colima start --network-address --arch arm64 --vm-type=qemu
-          docker --version
-          brew install docker-compose
-          docker-compose --version
+          pwd
+          whoami
+          uname -m
+          uname -a
 
-      - if: runner.os == 'Windows'
-        name: Install Docker Compose on Windows
-        shell: pwsh
-        run: |
-          $ErrorActionPreference = "Stop"
-          $dockerComposeVersion = "v2.30.1"  # 根据需要更改版本号
-          $dockerComposePath = "${{ github.workspace }}\docker-compose.exe"  # 使用临时目录
+      - name: First Run etcd | Setup
+        uses: ./.github/actions/setup/etcd
 
-          # 下载 Docker Compose
-          Invoke-WebRequest -Uri "https://github.com/docker/compose/releases/download/$dockerComposeVersion/docker-compose-Windows-x86_64.exe" -OutFile $dockerComposePath
-          $dockerComposeDir = [System.IO.Path]::GetDirectoryName($dockerComposePath)
-          [System.Environment]::SetEnvironmentVariable("Path", "$env:Path;$dockerComposeDir", [System.EnvironmentVariableTarget]::Machine)
-          $env:Path += ";$dockerComposeDir"
-          docker --version
-          docker-compose --version
+      - name: Start etcd
+        shell: bash
+        working-directory: ${{ github.workspace }}
+        run: nohup etcd >etcd.log 2>&1 & echo $! > etcd.pid
 
-      - if: runner.os == 'Windows'
-        name: Verify Docker installation on Windows
-        shell: pwsh
-        run: |
-          $env:Path += ";${{ github.workspace }}"
-          docker --version
-          docker-compose --version
+      - if : runner.os == 'macOS'
+        name: Environment dependence
+        uses: ./.github/actions/dependence
+        with:
+          java: "11"
 
-      - if: runner.os == 'Linux'
-        name: Install Docker Compose
-        run: |
-          DOCKER_COMPOSE_VERSION=v2.30.1
-          sudo curl -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-          sudo chmod +x /usr/local/bin/docker-compose
+      - if : runner.os != 'macOS'
+        name: Environment dependence
+        uses: ./.github/actions/dependence
+        with:
+          java: "8"
 
-      - if: runner.os != 'Windows'
-        name: Verify Docker installation
+#      - name: Run DB
+#        uses: ./.github/actions/dbRunner
+#        with:
+#          DB-name: "VectorDB"
+      - name: pwd
         shell: bash
         run: |
-          docker --version
-          docker-compose --version
+          pwd
+          ls
+          uname -m
 
-      - name: Run Milvus DB
-        uses: ./.github/workflows/actions/service/milvus
+#          /d/a/test/test
+
+#      - if : runner.os == 'Windows'
+#        uses: vedantmgoyal9/setup-wsl2@main
+#
+#      - if : runner.os == 'Windows'
+#        run: apt update && apt upgrade -y
+#        shell: wsl-run {0}
+#
+#      - if : runner.os == 'Windows'
+#        name: Set JAVA_HOME
+#        shell: wsl-run {0}
+#        run: |
+#          sudo apt update
+#          sudo apt install openjdk-8-jdk -y
+#          echo "export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64" >> $HOME/.bashrc
+#          echo "export PATH=\$PATH:\$JAVA_HOME/bin" >> $HOME/.bashrc
+#          source $HOME/.bashrc
+#          java -version
+#          echo $JAVA_HOME
+#
+#      - if: runner.os == 'Windows'
+#        name: java version
+#        shell: bash
+#        run: |
+#          pwd
+#          java -version
+#          echo $JAVA_HOME
+#          ipconfig
+#
+#      - if: runner.os == 'Windows'
+#        name: wsl java version
+#        shell: wsl-run {0}
+#        run: |
+#          pwd
+#          echo $JAVA_HOME
+#          java -version
+
+      - name: Run DB
+        uses: ./.github/actions/dbRunner
         with:
-          stop: false
-          clean: false
-          start: true
-          ports: 19530 19531 19532
+          DB-name: "VectorDB"
 
+
+      - if : runner.os != 'Windows'
+        name: Network test
+        shell: bash
+        run: |
+          docker ps
+
+          for port in 19530 19531 19532; do
+            if netstat -an | grep -q ".*:$port.*LISTEN"; then
+              echo "Port $port is open."
+            else
+              echo "Port $port is not open."
+            fi
+          done
+
+          docker ps -a
+
+#      - if : runner.os == 'Windows'
+#        name: Network test on Windows
+#        shell: bash
+#        run: |
+#          for port in 19530 19531 19532; do
+#            if netstat -an | grep -q ".*:$port.*LISTEN"; then
+#              echo "Port $port is open."
+#            else
+#              echo "Port $port is not open."
+#            fi
+#          done
+#
+      - if : runner.os == 'macOS'
+        name: replace host
+        shell: bash
+        run: |
+          docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' milvus19530-standalone
+          ifconfig en0 | grep "inet " | awk '{print $2}'
+          ls
+          echo "========================"
+          MILVUS_HOST=$(ifconfig en0 | grep "inet " | awk '{print $2}')
+          MILVUS_HOST="192.168.106.2"
+          echo "MILVUS_HOST=${MILVUS_HOST}"
+          sed -i"" -e "s/127.0.0.1/${MILVUS_HOST}/g" src/main/java/org/example/MilvusTest.java
+          sed -i"" -e "s/127.0.0.1/${MILVUS_HOST}/g" src/main/java/org/example/MilvusTest1.java
+          sed -i"" -e "s/127.0.0.1/${MILVUS_HOST}/g" src/main/java/org/example/MilvusTest2.java
+          ifconfig
 
       - name: Run tests
         shell: bash
         run: |
-          docker ps -a
-          if ss -tuln | grep -q ":19530 "; then
-            echo "Port 19530 is open."
-          else
-            echo "Port 19530 is not open."
-          fi
-          mvn test  # 运行测试
+          mvn clean package
+          mvn test
 
+
+#      - name: Run tests1
+#        shell: bash
+#        run: |
+#          chmod +x "${GITHUB_WORKSPACE}/.github/scripts/test/test_union.sh"
+#          mvn test -q -Dtest=Controller -DfailIfNoTests=false -P-format

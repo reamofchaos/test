@@ -17,12 +17,13 @@ import io.milvus.v2.service.vector.response.QueryResp;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class MilvusTest {
     private String uri = "grpc://127.0.0.1:19530";
-//    private String uri = "grpc://172.22.167.254:19531";
+//    private String uri = "grpc://172.18.71.153:19530";
 
     String username = "";
     String password = "";
@@ -35,8 +36,9 @@ public class MilvusTest {
     public MilvusClientV2 createClient() {
         MilvusClientV2 client = null;
         int i=0;
+        System.out.println("uri : "+uri);
 
-        while (client ==null && i++<30) {
+        while (client ==null && i++<5) {
             if (i>1){
                 try {
                     Thread.sleep(2000);
@@ -45,8 +47,10 @@ public class MilvusTest {
                     throw new RuntimeException(e);
                 }
             }
-            MilvusClientV2Pool pool = MilvusClientPool.createPool(uri, username, password);
-            client = pool.getClient("tmp");
+            long l=System.currentTimeMillis();
+            MilvusClientV2Pool pool = MilvusClientPool.createPool(uri, username, password,MilvusClientPool.getPoolConfig(new HashMap<>()));
+            client = pool.getClient("default");
+            System.out.println("get client : "+(System.currentTimeMillis()-l));
         }
         if (client == null) {
             throw new RuntimeException("Unable to create client");
@@ -69,11 +73,13 @@ public class MilvusTest {
         client.useDatabase("test");
 
         try {
+            long l = System.currentTimeMillis();
             client.createCollection(CreateCollectionReq.builder()
                     .collectionName("test")
                     .dimension(4)
                     .consistencyLevel(ConsistencyLevel.STRONG)
                     .build());
+            System.out.println("create collection success : "+(System.currentTimeMillis()-l));
         }catch (Exception e){
             System.out.println("collection exists");
         }
@@ -94,17 +100,21 @@ public class MilvusTest {
             row.addProperty("num", i * 2);
             rows.add(row);
         }
+        long l = System.currentTimeMillis();
         InsertResp insertR =
                 client
                         .insert(InsertReq.builder().collectionName(collectionName).data(rows).build());
+        System.out.println("insert time : "+(System.currentTimeMillis()-l));
         System.out.println("inserted : "+insertR.getInsertCnt());
         return insertR.getInsertCnt();
     }
 
     public long search() throws InterruptedException {
         client.useDatabase("test");
+        long l=System.currentTimeMillis();
         QueryResp resp = client.query(QueryReq.builder().collectionName("test")
                 .filter("").outputFields(Arrays.asList("num")).limit(10000).build());
+        System.out.println("search time : "+(System.currentTimeMillis()-l));
         long size = resp.getQueryResults().size();
         System.out.println("size = "+size);
 

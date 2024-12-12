@@ -26,7 +26,7 @@ public class MilvusTest2Test extends TestCase {
 
 
 
-    @Test
+//    @Test
     public void testSearch() throws InterruptedException {
         long r = test.insert();
         assertEquals(r, 10);

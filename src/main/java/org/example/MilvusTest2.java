@@ -20,7 +20,7 @@ import java.util.List;
 
 public class MilvusTest2 {
     private String uri = "grpc://127.0.0.1:19532";
-//    private String uri = "grpc://172.22.167.254:19531";
+//    private String uri = "grpc://192.168.200.47:19532";
 
     String username = "";
     String password = "";
@@ -33,7 +33,7 @@ public class MilvusTest2 {
     public MilvusClientV2 createClient() {
         MilvusClientV2 client = null;
         int i=0;
-
+        System.out.println("uri : "+uri);
         while (client ==null && i++<30) {
             if (i>1){
                 try {

@@ -1,0 +1,27 @@
+name: "db-runner"
+description: "db runner"
+inputs:
+    DB-name:
+        description: "DB name"
+        required: false
+        default: "VectorDB"
+    Root-Dir-Path:
+      description: "the path of IGinX root directory"
+      required: false
+      default: "${GITHUB_WORKSPACE}"
+
+runs:
+    using: "composite" # Mandatory parameter
+    steps:
+        - id: project
+          uses: ./.github/actions/project
+
+        - if: inputs.DB-name=='VectorDB'
+          name: Run Milvus DB
+          uses: ./.github/actions/service/vectordb
+          with:
+              stop: false
+              clean: false
+              start: true
+              ports: 19530
+              Root-Dir-Path: ${{ inputs.Root-Dir-Path }}

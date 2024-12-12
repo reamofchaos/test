@@ -12,7 +12,9 @@ public class TestTest {
         assert result==3;
     }
 
-
+//    io.grpc.netty.NettyChannelProvider a;
+//    io.grpc.netty.UdsNettyChannelProvider b;
+//    io.grpc.okhttp.OkHttpChannelProvider c;
     @Test
     public void sub() {
         org.example.Test test =new org.example.Test();
