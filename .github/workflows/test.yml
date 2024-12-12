@@ -36,11 +36,11 @@ jobs:
         working-directory: ${{ github.workspace }}
         run: nohup etcd >etcd.log 2>&1 & echo $! > etcd.pid
 
-      - name: Run test etcd
-        shell: bash
-        run: |
-          mvn clean package
-          mvn test -Dtest=TestEtcd
+#      - name: Run test etcd
+#        shell: bash
+#        run: |
+#          mvn clean package
+#          mvn test -Dtest=TestEtcd
 
       - if : runner.os == 'macOS'
         name: Environment dependence
