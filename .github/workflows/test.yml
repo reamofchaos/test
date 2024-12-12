@@ -28,6 +28,11 @@ jobs:
           uname -m
           uname -a
 
+      - name: Start etcd
+        shell: bash
+        working-directory: ${{ github.workspace }}
+        run: nohup etcd >etcd.log 2>&1 & echo $! > etcd.pid
+
       - if : runner.os == 'macOS'
         name: Environment dependence
         uses: ./.github/actions/dependence
@@ -50,11 +55,6 @@ jobs:
           pwd
           ls
           uname -m
-
-      - name: Start etcd
-        shell: bash
-        working-directory: ${{ github.workspace }}
-        run: nohup etcd >etcd.log 2>&1 & echo $! > etcd.pid
 
 #          /d/a/test/test
 
@@ -137,7 +137,7 @@ jobs:
           ls
           echo "========================"
           MILVUS_HOST=$(ifconfig en0 | grep "inet " | awk '{print $2}')
-          MILVUS_HOST="192.168.65.2"
+          MILVUS_HOST="192.168.106.2"
           echo "MILVUS_HOST=${MILVUS_HOST}"
           sed -i"" -e "s/127.0.0.1/${MILVUS_HOST}/g" src/main/java/org/example/MilvusTest.java
           sed -i"" -e "s/127.0.0.1/${MILVUS_HOST}/g" src/main/java/org/example/MilvusTest1.java

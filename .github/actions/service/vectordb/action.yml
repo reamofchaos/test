@@ -94,7 +94,7 @@ runs:
           working-directory: ${{ github.workspace }}
           run: |
             docker ps
-            for port in 19530 19531 19532; do
+            for port in ${{ inputs.ports }}; do
               if netstat -an | grep -q ".*:$port.*LISTEN"; then
                 echo "Port $port is open."
               else
@@ -110,7 +110,7 @@ runs:
           shell: bash
           working-directory: ${{ github.workspace }}
           run: |
-            for port in 19530 19531 19532; do
+            for port in ${{ inputs.ports }}; do
               if netstat -an | grep -q ".*:$port.*LISTEN"; then
                 echo "Port $port is open."
               else
