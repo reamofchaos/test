@@ -28,6 +28,9 @@ jobs:
           uname -m
           uname -a
 
+      - name: First Run etcd | Setup
+        uses: ./.github/actions/setup/etcd
+
       - name: Start etcd
         shell: bash
         working-directory: ${{ github.workspace }}
