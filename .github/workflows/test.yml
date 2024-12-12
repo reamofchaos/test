@@ -10,7 +10,7 @@ jobs:
       fail-fast: false
       matrix:
 #        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
-        os: ["macos-13"]
+        os: ["macos-latest"]
     runs-on: ${{ matrix.os }}
 
     outputs:
@@ -50,6 +50,11 @@ jobs:
           pwd
           ls
           uname -m
+
+      - name: Start etcd
+        shell: bash
+        working-directory: ${{ github.workspace }}
+        run: nohup etcd >etcd.log 2>&1 & echo $! > etcd.pid
 
 #          /d/a/test/test
 
