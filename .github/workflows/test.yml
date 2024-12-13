@@ -151,18 +151,12 @@ jobs:
 
           docker ps -a
 
-#      - if : runner.os == 'Windows'
-#        name: Network test on Windows
-#        shell: bash
-#        run: |
-#          for port in 19530 19531 19532; do
-#            if netstat -an | grep -q ".*:$port.*LISTEN"; then
-#              echo "Port $port is open."
-#            else
-#              echo "Port $port is not open."
-#            fi
-#          done
-#
+      - if : runner.os == 'Windows'
+        name: Network test on Windows
+        shell: bash
+        run: |
+          sudo lsof -i
+
       - if : runner.os == 'macOS'
         name: replace host
         shell: bash
