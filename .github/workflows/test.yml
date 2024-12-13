@@ -151,8 +151,7 @@ jobs:
 
           docker ps -a
 
-      - if : runner.os == 'Windows'
-        name: Network test on Windows
+      - name: Network test
         shell: bash
         run: |
           sudo lsof -i
