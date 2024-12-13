@@ -120,20 +120,20 @@ jobs:
         with:
           DB-name: "VectorDB"
 
-      - name: net test
-        shell: bash
-        run: |
-          for port in 2379; do
-            if netstat -an | grep -q ".*:$port.*LISTEN"; then
-              echo "Port $port is open."
-            else
-              echo "Port $port is not open."
-            fi
-          done
-          sudo lsof -i :2379
-          sudo lsof -i :19530
-          netstat -an | grep LISTEN
-          ss -tuln
+#      - name: net test
+#        shell: bash
+#        run: |
+#          for port in 2379; do
+#            if netstat -an | grep -q ".*:$port.*LISTEN"; then
+#              echo "Port $port is open."
+#            else
+#              echo "Port $port is not open."
+#            fi
+#          done
+#          sudo lsof -i :2379
+#          sudo lsof -i :19530
+#          netstat -an | grep LISTEN
+#          ss -tuln
 
       - if : runner.os != 'Windows'
         name: Network test
