@@ -181,6 +181,7 @@ jobs:
 
       - name: docker-compose logs
         shell: bash
+        if: always()
         run: |
           docker ps
           docker-compose logs
