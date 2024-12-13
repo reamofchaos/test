@@ -28,24 +28,24 @@ jobs:
           uname -m
           uname -a
 
-      - name: First Run etcd | Setup
-        uses: ./.github/actions/setup/etcd
+#      - name: First Run etcd | Setup
+#        uses: ./.github/actions/setup/etcd
+#
+#      - name: Start etcd
+#        shell: bash
+#        working-directory: ${{ github.workspace }}
+#        run: nohup etcd >etcd.log 2>&1 & echo $! > etcd.pid
 
-      - name: Start etcd
-        shell: bash
-        working-directory: ${{ github.workspace }}
-        run: nohup etcd >etcd.log 2>&1 & echo $! > etcd.pid
-
-      - name: net test
-        shell: bash
-        run: |  
-          for port in 2379; do
-            if netstat -an | grep -q ".*:$port.*LISTEN"; then
-              echo "Port $port is open."
-            else
-              echo "Port $port is not open."
-            fi
-          done
+#      - name: net test
+#        shell: bash
+#        run: |
+#          for port in 2379; do
+#            if netstat -an | grep -q ".*:$port.*LISTEN"; then
+#              echo "Port $port is open."
+#            else
+#              echo "Port $port is not open."
+#            fi
+#          done
 
 #      - name: Run test etcd
 #        shell: bash
@@ -65,16 +65,6 @@ jobs:
         with:
           java: "8"
 
-      - name: net test
-        shell: bash
-        run: |
-          for port in 2379; do
-            if netstat -an | grep -q ".*:$port.*LISTEN"; then
-              echo "Port $port is open."
-            else
-              echo "Port $port is not open."
-            fi
-          done
 
 #      - name: Run DB
 #        uses: ./.github/actions/dbRunner
