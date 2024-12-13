@@ -140,6 +140,10 @@ jobs:
               echo "Port $port is not open."
             fi
           done
+          sudo lsof -i :2379
+          sudo lsof -i :19530
+          netstat -an | grep LISTEN
+          ss -tuln
 
       - if : runner.os != 'Windows'
         name: Network test
