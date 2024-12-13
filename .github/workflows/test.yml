@@ -170,13 +170,14 @@ jobs:
           sed -i"" -e "s/127.0.0.1/${MILVUS_HOST}/g" src/main/java/org/example/MilvusTest.java
           sed -i"" -e "s/127.0.0.1/${MILVUS_HOST}/g" src/main/java/org/example/MilvusTest1.java
           sed -i"" -e "s/127.0.0.1/${MILVUS_HOST}/g" src/main/java/org/example/MilvusTest2.java
-          ifconfig
 
       - name: Run tests
         shell: bash
         run: |
           mvn clean package
           mvn test
+          docker ps
+          docker-compose logs
 
 
 #      - name: Run tests1
