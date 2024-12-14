@@ -28,13 +28,30 @@ jobs:
           uname -m
           uname -a
 
-      - name: First Run etcd | Setup
-        uses: ./.github/actions/setup/etcd
+#      - name: First Run etcd | Setup
+#        uses: ./.github/actions/setup/etcd
+#
+#      - name: Start etcd
+#        shell: bash
+#        working-directory: ${{ github.workspace }}
+#        run: nohup etcd >etcd.log 2>&1 & echo $! > etcd.pid
 
-      - name: Start etcd
-        shell: bash
-        working-directory: ${{ github.workspace }}
-        run: nohup etcd >etcd.log 2>&1 & echo $! > etcd.pid
+#      - name: net test
+#        shell: bash
+#        run: |
+#          for port in 2379; do
+#            if netstat -an | grep -q ".*:$port.*LISTEN"; then
+#              echo "Port $port is open."
+#            else
+#              echo "Port $port is not open."
+#            fi
+#          done
+
+#      - name: Run test etcd
+#        shell: bash
+#        run: |
+#          mvn clean package
+#          mvn test -Dtest=TestEtcd
 
       - if : runner.os == 'macOS'
         name: Environment dependence
@@ -47,6 +64,7 @@ jobs:
         uses: ./.github/actions/dependence
         with:
           java: "8"
+
 
 #      - name: Run DB
 #        uses: ./.github/actions/dbRunner
@@ -102,6 +120,20 @@ jobs:
         with:
           DB-name: "VectorDB"
 
+#      - name: net test
+#        shell: bash
+#        run: |
+#          for port in 2379; do
+#            if netstat -an | grep -q ".*:$port.*LISTEN"; then
+#              echo "Port $port is open."
+#            else
+#              echo "Port $port is not open."
+#            fi
+#          done
+#          sudo lsof -i :2379
+#          sudo lsof -i :19530
+#          netstat -an | grep LISTEN
+#          ss -tuln
 
       - if : runner.os != 'Windows'
         name: Network test
@@ -119,18 +151,11 @@ jobs:
 
           docker ps -a
 
-#      - if : runner.os == 'Windows'
-#        name: Network test on Windows
-#        shell: bash
-#        run: |
-#          for port in 19530 19531 19532; do
-#            if netstat -an | grep -q ".*:$port.*LISTEN"; then
-#              echo "Port $port is open."
-#            else
-#              echo "Port $port is not open."
-#            fi
-#          done
-#
+      - name: Network test
+        shell: bash
+        run: |
+          sudo lsof -i
+
       - if : runner.os == 'macOS'
         name: replace host
         shell: bash
@@ -145,14 +170,21 @@ jobs:
           sed -i"" -e "s/127.0.0.1/${MILVUS_HOST}/g" src/main/java/org/example/MilvusTest.java
           sed -i"" -e "s/127.0.0.1/${MILVUS_HOST}/g" src/main/java/org/example/MilvusTest1.java
           sed -i"" -e "s/127.0.0.1/${MILVUS_HOST}/g" src/main/java/org/example/MilvusTest2.java
-          ifconfig
 
       - name: Run tests
         shell: bash
         run: |
           mvn clean package
           mvn test
+          docker ps
+          docker-compose logs
 
+      - name: docker-compose logs
+        shell: bash
+        if: always()
+        run: |
+          docker ps
+          docker-compose -f 19530/docker-compose-19530.yml logs
 
 #      - name: Run tests1
 #        shell: bash
