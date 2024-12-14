@@ -184,7 +184,7 @@ jobs:
         if: always()
         run: |
           docker ps
-          docker-compose logs
+          docker-compose -f 19530/docker-compose-19530.yml logs
 
 #      - name: Run tests1
 #        shell: bash
