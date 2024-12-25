@@ -177,7 +177,6 @@ jobs:
           mvn clean package
           mvn test
           docker ps
-          docker-compose logs
 
       - name: docker-compose logs
         shell: bash
@@ -185,6 +184,10 @@ jobs:
         run: |
           docker ps
           docker-compose -f 19530/docker-compose-19530.yml logs
+          ls
+          ls volumes19530
+          du -sh volumes19530
+          du -sh
 
 #      - name: Run tests1
 #        shell: bash
