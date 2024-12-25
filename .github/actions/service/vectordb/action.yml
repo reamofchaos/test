@@ -40,10 +40,10 @@ runs:
               echo ${{ github.workspace }}
               for port in ${{ inputs.ports }}; do
                 mkdir -p $port
-                mkdir -p /Users/runner/work/volumes$port
+                mkdir -p /Users/runner/work/$port/volumes
                 cp -f docker/milvus/docker-compose.yml $port/docker-compose-$port.yml
                 sed -i"" -e "s/19530:19530/$port:19530/g" $port/docker-compose-$port.yml
-                sed -i"" -e "s/\/volumes/\/Users\/runner\/work\/volumes$port/g" $port/docker-compose-$port.yml
+                sed -i"" -e "s/\/volumes/\/Users\/runner\/work\/$port\/volumes/g" $port/docker-compose-$port.yml
                 sed -i"" -e "s/name: milvus/name: milvus$port/g" $port/docker-compose-$port.yml
               done
               echo "docker-compose.yml created successfully"
@@ -89,11 +89,11 @@ runs:
             done
             docker ps -a
             echo "=========================== ls /"
-            sudo ls /Users/runner/work
-            echo "=========================== ls /volumes19530"
-            sudo ls /Users/runner/work/volumes19530
-            echo "=========================== du -sh /volumes19530"
-            sudo du -sh /Users/runner/work/volumes19530
+            sudo ls /Users/runner/work/19530
+            echo "=========================== ls /volumes"
+            sudo ls /Users/runner/work/19530/volumes
+            echo "=========================== du -sh /volumes"
+            sudo du -sh /Users/runner/work/19530/volumes
 
         - if: fromJSON(inputs.start) && runner.os != 'Windows'
           name: show logs
