@@ -87,8 +87,8 @@ runs:
               fi
             done
             docker ps -a
-            ls /volumes
-            sudo du -sh /volumes
+            ls /volumes19530
+            sudo du -sh /volumes19530
 
         - if: fromJSON(inputs.start) && runner.os != 'Windows'
           name: show logs
