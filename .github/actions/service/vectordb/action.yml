@@ -37,6 +37,7 @@ runs:
           run: |
               pwd
               whoami
+              id
               echo ${{ github.workspace }}
               for port in ${{ inputs.ports }}; do
                 mkdir -p $port

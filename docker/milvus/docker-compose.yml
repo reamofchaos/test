@@ -4,7 +4,7 @@ services:
   etcd:
     container_name: milvus-etcd
     image: quay.io/coreos/etcd:v3.5.14
-    user: "runner:runner"
+    user: "1000:1000"
     environment:
       - ETCD_AUTO_COMPACTION_MODE=revision
       - ETCD_AUTO_COMPACTION_RETENTION=1
@@ -25,7 +25,7 @@ services:
     environment:
       MINIO_ACCESS_KEY: minioadmin
       MINIO_SECRET_KEY: minioadmin
-    user: "runner:runner"
+    user: "1000:1000"
     volumes:
       - /volumes/minio:/minio_data
     command: minio server /minio_data --console-address ":9001"
@@ -39,7 +39,7 @@ services:
     container_name: milvus-standalone
     image: milvusdb/milvus:v2.5.0
     command: ["milvus", "run", "standalone"]
-    user: "runner:runner"
+    user: "1000:1000"
     security_opt:
       - seccomp:unconfined
     environment:
