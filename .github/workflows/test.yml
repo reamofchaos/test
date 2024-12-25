@@ -184,6 +184,10 @@ jobs:
         run: |
           docker ps
           docker-compose -f 19530/docker-compose-19530.yml logs
+          echo "========================"
+          ls /
+          echo "========================"
+          pwd
           ls
           ls volumes19530
           du -sh volumes19530
