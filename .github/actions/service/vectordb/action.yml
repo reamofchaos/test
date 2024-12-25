@@ -40,6 +40,7 @@ runs:
               echo ${{ github.workspace }}
               for port in ${{ inputs.ports }}; do
                 mkdir -p $port
+                mkdir -p /volumes$port
                 cp -f docker/milvus/docker-compose.yml $port/docker-compose-$port.yml
                 sed -i"" -e "s/19530:19530/$port:19530/g" $port/docker-compose-$port.yml
                 sed -i"" -e "s/\/volumes/\/volumes$port/g" $port/docker-compose-$port.yml
@@ -87,7 +88,11 @@ runs:
               fi
             done
             docker ps -a
-            ls /volumes19530
+            echo "=========================== ls /"
+            sudo ls /
+            echo "=========================== ls /volumes19530"
+            sudo ls /volumes19530
+            echo "=========================== du -sh /volumes19530"
             sudo du -sh /volumes19530
 
         - if: fromJSON(inputs.start) && runner.os != 'Windows'
