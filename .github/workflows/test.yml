@@ -188,6 +188,9 @@ jobs:
           ls volumes19530
           du -sh volumes19530
           du -sh
+          du -sh volumes19530/etcd
+          du -sh volumes19530/minio
+          du -sh volumes19530/milvus
 
 #      - name: Run tests1
 #        shell: bash
