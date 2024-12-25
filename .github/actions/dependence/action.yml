@@ -66,12 +66,6 @@ runs:
           shell: bash
           run: |
             colima status
-            echo "-------------------"
-            colima ip
-            echo "==================="
-            MILVUS_HOST = $(colima ip)
-            echo "MILVUS_HOST=${MILVUS_HOST}"
-            echo "==================="
 
         - name: Set up JDK ${{ inputs.java }}
           uses: actions/setup-java@v4
