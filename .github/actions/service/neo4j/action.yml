@@ -26,7 +26,7 @@ runs:
       - if: fromJSON(inputs.start)
         name: Create Neo4j Work Directory
         shell: bash
-        working-directory: ${{ github.action_path }}
+        working-directory: ${{ github.workspace }}
         run: |
           for port in ${{ inputs.ports }}; do
             instance_dir="${{ github.action_path }}/neo4j_instances/$port"
