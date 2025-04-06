@@ -4,37 +4,59 @@ description: "setup neo4j community edition 5.x"
 runs:
   using: "composite"
   steps:
-    # Linux 环境配置
-    - if: runner.os == 'Linux'
-      name: Add Neo4j APT repository
-      shell: bash
+    - name: Download and Extract Neo4j
+      working-directory: ${{ github.action_path }}
       run: |
-        wget -O - https://debian.neo4j.com/neotechnology.gpg.key | sudo apt-key add -
-        echo 'deb https://debian.neo4j.com stable 5.x' | sudo tee /etc/apt/sources.list.d/neo4j.list
-        sudo apt-get update -q
-
-    # 安装步骤
-    - name: Install Neo4j
-      uses: ./.github/actions/setup/package
-      with:
-        brew: neo4j@5
-        apt: neo4j
-
-    - if: runner.os == 'macOS'
-      name: Add Neo4j to PATH
+        curl -L -o neo4j.tar.gz https://dist.neo4j.org/neo4j-community-5.26.5-unix.tar.gz
+#        mkdir neo4j1 neo4j2
+#        tar -xzf neo4j.tar.gz --strip-components=1 -C neo4j1
+#        cp -r neo4j1/* neo4j2/
       shell: bash
-      run: echo "/opt/homebrew/opt/neo4j@5/bin" >> $GITHUB_PATH
 
-    - if: runner.os == 'Windows'
-      name: Manual Install Neo4j
-      shell: powershell
-      run: |
-        $downloadUrl = "https://neo4j.com/artifact.php?name=neo4j-community-5.26.5-windows.zip"
-        $installPath = "C:\neo4j"
+#    - name: Configure Neo4j Instances
+#      run: |
+#        # Instance 1
+#        echo "dbms.connector.bolt.listen_address=:7687" >> neo4j1/conf/neo4j.conf
+#        echo "dbms.connector.http.enabled=false" >> neo4j1/conf/neo4j.conf
+#        echo "dbms.connector.https.enabled=false" >> neo4j1/conf/neo4j.conf
+#
+#        # Instance 2
+#        echo "dbms.connector.bolt.listen_address=:7688" >> neo4j2/conf/neo4j.conf
+#        echo "dbms.connector.http.enabled=false" >> neo4j2/conf/neo4j.conf
+#        echo "dbms.connector.https.enabled=false" >> neo4j2/conf/neo4j.conf
+#      shell: bash
 
-        Invoke-WebRequest $downloadUrl -OutFile "$env:TEMP\neo4j.zip"
-        Expand-Archive -Path "$env:TEMP\neo4j.zip" -DestinationPath $installPath -Force
-
-        $neo4jBin = (Get-ChildItem "$installPath\neo4j-community-5*\bin").FullName
-        echo "NEO4J_HOME=$((Get-Item $neo4jBin).Directory.Parent.FullName)" >> $env:GITHUB_ENV
-        echo "$neo4jBin" >> $env:GITHUB_PATH
+#    # Linux 环境配置
+#    - if: runner.os == 'Linux'
+#      name: Add Neo4j APT repository
+#      shell: bash
+#      run: |
+#        wget -O - https://debian.neo4j.com/neotechnology.gpg.key | sudo apt-key add -
+#        echo 'deb https://debian.neo4j.com stable 5.x' | sudo tee /etc/apt/sources.list.d/neo4j.list
+#        sudo apt-get update -q
+#
+#    # 安装步骤
+#    - name: Install Neo4j
+#      uses: ./.github/actions/setup/package
+#      with:
+#        brew: neo4j@5
+#        apt: neo4j
+#
+#    - if: runner.os == 'macOS'
+#      name: Add Neo4j to PATH
+#      shell: bash
+#      run: echo "/opt/homebrew/opt/neo4j@5/bin" >> $GITHUB_PATH
+#
+#    - if: runner.os == 'Windows'
+#      name: Manual Install Neo4j
+#      shell: powershell
+#      run: |
+#        $downloadUrl = "https://neo4j.com/artifact.php?name=neo4j-community-5.26.5-windows.zip"
+#        $installPath = "C:\neo4j"
+#
+#        Invoke-WebRequest $downloadUrl -OutFile "$env:TEMP\neo4j.zip"
+#        Expand-Archive -Path "$env:TEMP\neo4j.zip" -DestinationPath $installPath -Force
+#
+#        $neo4jBin = (Get-ChildItem "$installPath\neo4j-community-5*\bin").FullName
+#        echo "NEO4J_HOME=$((Get-Item $neo4jBin).Directory.Parent.FullName)" >> $env:GITHUB_ENV
+#        echo "$neo4jBin" >> $env:GITHUB_PATH

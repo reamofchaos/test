@@ -1,0 +1,72 @@
+name: "neo4j"
+description: "stop, clean and start neo4j in order"
+inputs:
+    stop:
+        description: "whether to stop"
+        required: true
+    clean:
+        description: "whether to clean"
+        required: true
+    start:
+        description: "whether to start"
+        required: true
+    ports:
+        description: "ports to run on"
+        required: false
+        default: "7687"
+
+runs:
+    using: "composite"
+    steps:
+      - if: fromJSON(inputs.stop) || fromJSON(inputs.clean)
+        name: unimplemented
+        shell: bash
+        run: exit 1
+
+      - if: fromJSON(inputs.start)
+        name: Create Neo4j Work Directory
+        shell: bash
+        working-directory: ${{ github.action_path }}
+        run: |
+          for port in ${{ inputs.ports }}; do
+            instance_dir="${{ github.action_path }}/neo4j_instances/$port"
+            mkdir $instance_dir
+            tar -xzf neo4j.tar.gz --strip-components=1 -C $instance_dir
+            
+            sed -i"" -e "s/server.http.enabled=true/server.http.enabled=false/g" $instance_dir/conf/neo4j.conf
+            sed -i"" -e "s/#server.bolt.listen_address=:7687/server.bolt.listen_address=:$port/g" $instance_dir/conf/neo4j.conf
+            
+            chmod +x $instance_dir/bin/neo4j
+          
+            if [[ "$RUNNER_OS" == "Windows" ]]; then
+              Start-Process -NoNewWindow -FilePath $instance_dir\bin\neo4j.bat -ArgumentList "console"
+            else
+              nohup $instance_dir/bin/neo4j console > neo4j1.log 2>&1 &
+            fi
+            sleep 20
+          done
+
+      - name: Check Bolt Ports
+        run: |
+          for port in ${{ inputs.ports }}; do
+            if [[ "$RUNNER_OS" == "Windows" ]]; then
+              netstat -ano | findstr $port
+            else
+              lsof -i :$port || netstat -tuln | grep $port
+            fi
+          done
+        shell: bash
+
+#        - if: fromJSON(inputs.start)
+#          name: Start redis
+#          shell: bash
+#          working-directory: ${{ github.action_path }}
+#          run: |
+#            for port in ${{ inputs.ports }}; do
+#              instance_dir="${{ github.action_path }}/neo4j_instances/$port"
+#
+#              # 启动服务并记录PID
+#              nohup neo4j-admin server start \
+#              --config-dir="$instance_dir/conf" \
+#              --pid-file="$instance_dir/neo4j.pid" > "$instance_dir/logs/startup.log" 2>&1 &
+#            done
