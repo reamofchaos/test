@@ -42,7 +42,7 @@ runs:
             $instance_dir/bin/neo4j-admin dbms set-initial-password neo4jtest
           
             if [[ "$RUNNER_OS" == "Windows" ]]; then
-              Start-Process -NoNewWindow -FilePath $instance_dir\bin\neo4j.bat -ArgumentList "console"
+              nohup $instance_dir/bin/neo4j console > neo4j1.log 2>&1 &
             else
               nohup $instance_dir/bin/neo4j console > neo4j1.log 2>&1 &
             fi
