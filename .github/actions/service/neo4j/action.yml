@@ -33,7 +33,7 @@ runs:
             mkdir -p $instance_dir
             tar -xzf neo4j.tar.gz --strip-components=1 -C $instance_dir
             
-            sed -i"" -e "s/#server.http.listen_address=:7473/#server.http.listen_address=:1$port/g" $instance_dir/conf/neo4j.conf
+            sed -i"" -e "s/#server.http.listen_address=:7474/#server.http.listen_address=:1$port/g" $instance_dir/conf/neo4j.conf
             sed -i"" -e "s/#server.bolt.listen_address=:7687/server.bolt.listen_address=:$port/g" $instance_dir/conf/neo4j.conf
             
             chmod +x $instance_dir/bin/neo4j
