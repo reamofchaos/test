@@ -29,7 +29,7 @@ runs:
         working-directory: ${{ github.workspace }}
         run: |
           for port in ${{ inputs.ports }}; do
-            instance_dir="${{ github.action_path }}/neo4j_instances/$port"
+            instance_dir="./neo4j_instances/$port"
             mkdir -p $instance_dir
             tar -xzf neo4j.tar.gz --strip-components=1 -C $instance_dir
             
