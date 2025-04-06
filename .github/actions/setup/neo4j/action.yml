@@ -5,9 +5,18 @@ runs:
   using: "composite"
   steps:
     - name: Download and Extract Neo4j
+      if: runner.os != 'Windows'
       working-directory: ${{ github.workspace }}
       run: |
         curl -L -o neo4j.tar.gz https://dist.neo4j.org/neo4j-community-5.26.5-unix.tar.gz
         pwd
         ls -a
       shell: bash
+
+    - name: Download Neo4j (Windows)
+      if: runner.os == 'Windows'
+      working-directory: ${{ github.workspace }}
+      run: |
+        curl -L -o neo4j.zip https://dist.neo4j.org/neo4j-community-5.26.5-windows.zip
+        pwd
+        dir
