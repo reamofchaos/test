@@ -37,6 +37,9 @@ runs:
             sed -i"" -e "s/#server.bolt.listen_address=:7687/server.bolt.listen_address=:$port/g" $instance_dir/conf/neo4j.conf
             
             chmod +x $instance_dir/bin/neo4j
+            chmod +x $instance_dir/bin/neo4j-admin
+            
+            $instance_dir/bin/neo4j-admin dbms set-initial-password neo4jtest
           
             if [[ "$RUNNER_OS" == "Windows" ]]; then
               Start-Process -NoNewWindow -FilePath $instance_dir\bin\neo4j.bat -ArgumentList "console"
@@ -54,25 +57,5 @@ runs:
             else
               lsof -i :$port || netstat -tuln | grep $port
             fi
-            
-            echo "Changing password on port 1$port..."
-            curl -s -o /dev/null -w "%{http_code}" -X POST http://localhost:1$port/user/neo4j/password \
-              -H "Content-Type: application/json" \
-              -u neo4j:neo4j \
-              -d '{"password": "neo4jtest"}'
           done
         shell: bash
-
-#        - if: fromJSON(inputs.start)
-#          name: Start redis
-#          shell: bash
-#          working-directory: ${{ github.action_path }}
-#          run: |
-#            for port in ${{ inputs.ports }}; do
-#              instance_dir="${{ github.action_path }}/neo4j_instances/$port"
-#
-#              # 启动服务并记录PID
-#              nohup neo4j-admin server start \
-#              --config-dir="$instance_dir/conf" \
-#              --pid-file="$instance_dir/neo4j.pid" > "$instance_dir/logs/startup.log" 2>&1 &
-#            done
