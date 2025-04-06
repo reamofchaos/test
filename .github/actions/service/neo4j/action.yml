@@ -64,10 +64,9 @@ runs:
             sed -i"" -e "s/#server.http.listen_address=:7474/server.http.listen_address=:1$port/g" $instance_dir/conf/neo4j.conf
             sed -i"" -e "s/#server.bolt.listen_address=:7687/server.bolt.listen_address=:$port/g" $instance_dir/conf/neo4j.conf
           
-            $instance_dir/bin/neo4j-admin.bat dbms set-initial-password neo4jtest
-          
-            start /b $instance_dir/bin/neo4j.bat console
-            timeout /t 10
+            powershell -Command "$instance_dir/bin/neo4j-admin.bat dbms set-initial-password neo4jtest"
+            powershell -Command "start /b $instance_dir/bin/neo4j.bat console"
+            sleep 10
           done
 
       - name: Check Bolt Ports
