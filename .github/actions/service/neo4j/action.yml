@@ -58,9 +58,8 @@ runs:
             dir
             dir $instance_dir
             dir $instance_dir/neo4j-community-5.26.5
-            find $instance_dir/ -mindepth 1 -maxdepth 1 -type d -name 'neo4j*' -exec bash -c 'shopt -s dotglob && mv "$1"/* $instance_dir/' _ {} \;
+            mv $instance_dir/neo4j*/* $instance_dir
             dir $instance_dir
-            dir $instance_dir/neo4j-community-5.26.5
             
             sed -i"" -e "s/#server.http.listen_address=:7474/server.http.listen_address=:1$port/g" $instance_dir/conf/neo4j.conf
             sed -i"" -e "s/#server.bolt.listen_address=:7687/server.bolt.listen_address=:$port/g" $instance_dir/conf/neo4j.conf
