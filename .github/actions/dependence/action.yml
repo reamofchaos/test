@@ -61,6 +61,12 @@ runs:
             brew install docker-compose
             docker-compose --version
 
+        - if: runner.os == 'macOS' &&  inputs.docker-required=='true'
+          name: Test Colima
+          shell: bash
+          run: |
+            colima status
+
         - name: Set up JDK ${{ inputs.java }}
           uses: actions/setup-java@v4
           with:
