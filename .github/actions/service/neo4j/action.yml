@@ -54,6 +54,10 @@ runs:
             instance_dir="./neo4j_instances/$port"
             mkdir -p $instance_dir
             powershell -Command "Expand-Archive neo4j.zip -DestinationPath $instance_dir"
+            
+            pwd
+            dir
+            dir $instance_dir
           
             sed -i"" -e "s/#server.http.listen_address=:7474/server.http.listen_address=:1$port/g" $instance_dir/conf/neo4j.conf
             sed -i"" -e "s/#server.bolt.listen_address=:7687/server.bolt.listen_address=:$port/g" $instance_dir/conf/neo4j.conf
