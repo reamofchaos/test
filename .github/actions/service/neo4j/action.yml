@@ -69,14 +69,3 @@ runs:
             
             sleep 10
           done
-
-      - name: Check Bolt Ports
-        run: |
-          for port in ${{ inputs.ports }}; do
-            if [[ "$RUNNER_OS" == "Windows" ]]; then
-              netstat -ano | findstr $port || true
-            else
-              lsof -i :$port || netstat -tuln | grep $port || true
-            fi
-          done
-        shell: bash

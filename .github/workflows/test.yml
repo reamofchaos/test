@@ -57,11 +57,6 @@ jobs:
             fi
           done
 
-      - name: Network test
-        shell: bash
-        run: |
-          ps -ef | grep neo4j
-
       - name: Run tests
         shell: bash
         run: |
