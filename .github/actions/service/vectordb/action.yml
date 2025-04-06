@@ -94,9 +94,9 @@ runs:
             docker ps -a
             echo "=========================== ls /"
             sudo ls
-            echo "=========================== ls /volumes19530"
+            echo "=========================== ls volumes19530"
             sudo ls volumes19530
-            echo "=========================== du -sh 19530/volumes"
+            echo "=========================== du -sh volumes19530"
             sudo du -sh volumes19530
 
         - if: fromJSON(inputs.start) && runner.os != 'Windows'
