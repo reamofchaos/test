@@ -8,6 +8,8 @@ runs:
       working-directory: ${{ github.action_path }}
       run: |
         curl -L -o neo4j.tar.gz https://dist.neo4j.org/neo4j-community-5.26.5-unix.tar.gz
+        pwd
+        ll
 #        mkdir neo4j1 neo4j2
 #        tar -xzf neo4j.tar.gz --strip-components=1 -C neo4j1
 #        cp -r neo4j1/* neo4j2/
